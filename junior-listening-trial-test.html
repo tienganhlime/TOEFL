@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TOEFL Junior Listening Test - Trung Tâm Tiếng Anh LIME</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 50%, #90CAF9 100%); }
+        .fade-in { animation: fadeIn 0.5s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .spinner { border: 3px solid #f3f3f3; border-top: 3px solid #1976D2; border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .audio-player-main { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, #1976D2 0%, #1565C0 100%); border-radius: 16px; padding: 20px 30px; box-shadow: 0 8px 24px rgba(0,0,0,0.3); z-index: 9999; min-width: 320px; }
+        .audio-controls-main { display: flex; align-items: center; gap: 16px; }
+        .play-btn-main { background: white; color: #1976D2; border: none; border-radius: 50%; width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s; font-size: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+        .play-btn-main:hover { transform: scale(1.1); }
+        .audio-info-main { color: white; flex: 1; }
+        .volume-control { display: flex; align-items: center; gap: 8px; color: white; }
+        .volume-slider { width: 100px; height: 6px; border-radius: 3px; background: rgba(255,255,255,0.3); outline: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<!-- Màn hình nhập thông tin -->
+<div id="infoScreen" class="min-h-screen p-4 fade-in">
+    <div class="max-w-2xl mx-auto">
+        <div class="bg-white rounded-2xl shadow-2xl p-8 mt-8">
+            <div class="text-center mb-8">
+                <img src="https://gofirst.pro/images/uploads/62/baseimg/logo_16541442053.png" alt="LIME Logo" class="w-32 h-32 mx-auto mb-4 object-contain">
+                <h1 class="text-4xl font-bold text-blue-700 mb-2">Trung Tâm Tiếng Anh LIME</h1>
+                <p class="text-blue-600 text-lg">Hotline: 0976222792</p>
+                <div class="mt-4 h-1 w-32 bg-blue-500 mx-auto rounded"></div>
+            </div>
+
+            <div class="bg-blue-50 rounded-xl p-6 mb-6">
+                <h2 class="text-2xl font-bold text-blue-800 mb-4">TOEFL JUNIOR - LISTENING TEST</h2>
+                <div class="space-y-2 text-blue-700">
+                    <p>🎧 Số câu hỏi: 42 câu</p>
+                    <p>⏰ Thời gian: Theo độ dài bài nghe (~40 phút)</p>
+                    <p>📊 Audio sẽ phát liên tục từ đầu đến cuối</p>
+                    <p>✅ Làm bài trực tuyến, chấm điểm tự động</p>
+                    <p>📊 Phân tích chi tiết năng lực học sinh</p>
+                </div>
+            </div>
+
+            <div class="bg-yellow-50 border-2 border-yellow-300 rounded-xl p-4 mb-6">
+                <div class="flex items-start gap-2">
+                    <svg class="w-6 h-6 text-yellow-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                    </svg>
+                    <div class="text-yellow-800 text-sm">
+                        <p class="font-bold mb-1">⚠️ Lưu ý quan trọng:</p>
+                        <p>• Đảm bảo âm lượng thiết bị ở mức vừa phải</p>
+                        <p>• Audio sẽ chạy liên tục, không thể dừng hoặc tua lại</p>
+                        <p>• Khi audio kết thúc = hết giờ làm bài</p>
+                        <p>• Hãy tập trung cao độ khi làm bài!</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-blue-800 font-semibold mb-2">Họ và tên học sinh *</label>
+                    <input type="text" id="studentName" class="w-full px-4 py-3 border-2 border-blue-300 rounded-lg focus:border-blue-500 focus:outline-none" placeholder="Nhập họ tên">
+                </div>
+                <div>
+                    <label class="block text-blue-800 font-semibold mb-2">Lớp *</label>
+                    <input type="text" id="studentClass" class="w-full px-4 py-3 border-2 border-blue-300 rounded-lg focus:border-blue-500 focus:outline-none" placeholder="Nhập lớp">
+                </div>
+                <div>
+                    <label class="block text-blue-800 font-semibold mb-2">Số điện thoại phụ huynh *</label>
+                    <input type="tel" id="parentPhone" class="w-full px-4 py-3 border-2 border-blue-300 rounded-lg focus:border-blue-500 focus:outline-none" placeholder="Nhập số điện thoại">
+                </div>
+            </div>
+
+            <button onclick="startTest()" class="w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-6 rounded-lg transition duration-300 text-lg shadow-lg">
+                BẮT ĐẦU LÀM BÀI
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Màn hình làm bài -->
+<div id="testScreen" class="hidden min-h-screen p-4 pb-32">
+    <div class="max-w-5xl mx-auto">
+        <div class="bg-white rounded-2xl shadow-2xl p-6 mb-6 sticky top-4 z-10">
+            <div class="flex justify-between items-center flex-wrap gap-4">
+                <div class="flex items-center gap-3">
+                    <img src="https://gofirst.pro/images/uploads/62/baseimg/logo_16541442053.png" alt="LIME Logo" class="w-12 h-12 object-contain">
+                    <div>
+                        <h1 class="text-2xl font-bold text-blue-700">Trung Tâm Tiếng Anh LIME</h1>
+                        <p class="text-blue-600 text-sm">Hotline: 0976222792</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-6">
+                    <div class="text-right">
+                        <p class="text-sm text-gray-600">Học sinh: <span id="headerName"></span></p>
+                        <p class="text-sm text-gray-600">Lớp: <span id="headerClass"></span></p>
+                    </div>
+                    <div class="flex items-center gap-2 bg-blue-100 px-4 py-2 rounded-lg">
+                        <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path>
+                        </svg>
+                        <span id="audioStatus" class="text-sm font-bold text-blue-600">Audio: Ready</span>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-4">
+                <div class="flex justify-between text-sm text-gray-600 mb-1">
+                    <span>Tiến độ: <span id="progress">0</span>/42 câu</span>
+                    <span id="progressPercent">0%</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-3">
+                    <div id="progressBar" class="bg-blue-600 h-3 rounded-full transition-all duration-300" style="width: 0%"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-2xl p-8">
+            <h2 class="text-3xl font-bold text-blue-800 mb-6 text-center">TOEFL JUNIOR - LISTENING TEST</h2>
+            <div id="questionsContainer" class="space-y-8"></div>
+
+            <div class="mt-8 pt-6 border-t-2 border-blue-200">
+                <button onclick="submitTest()" id="submitBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-6 rounded-lg transition duration-300 text-xl shadow-lg flex items-center justify-center gap-2">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    NỘP BÀI
+                </button>
+                <div id="warningBox" class="hidden mt-4 p-4 bg-yellow-50 border-2 border-yellow-300 rounded-lg flex items-start gap-2">
+                    <svg class="w-5 h-5 text-yellow-600 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                    </svg>
+                    <p class="text-yellow-800 text-sm">Bạn còn <span id="unansweredCount">42</span> câu chưa trả lời. Hãy kiểm tra lại trước khi nộp bài!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Audio Player cố định -->
+<div id="audioPlayerMain" class="audio-player-main hidden">
+    <div class="audio-controls-main">
+        <button class="play-btn-main" onclick="toggleAudio()" id="playBtnMain">▶</button>
+        <div class="audio-info-main">
+            <div class="font-bold text-lg">Listening Test Audio</div>
+            <div class="text-sm opacity-90" id="audioTime">00:00 / 00:00</div>
+        </div>
+        <div class="volume-control">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217zM14.657 2.929a1 1 0 011.414 0A9.972 9.972 0 0119 10a9.972 9.972 0 01-2.929 7.071 1 1 0 01-1.414-1.414A7.971 7.971 0 0017 10c0-2.21-.894-4.208-2.343-5.657a1 1 0 010-1.414zm-2.829 2.828a1 1 0 011.415 0A5.983 5.983 0 0115 10a5.984 5.984 0 01-1.757 4.243 1 1 0 01-1.415-1.415A3.984 3.984 0 0013 10a3.983 3.983 0 00-1.172-2.828 1 1 0 010-1.415z"></path>
+            </svg>
+            <input type="range" min="0" max="100" value="100" class="volume-slider" onchange="setVolume(this.value)" id="volumeSlider">
+        </div>
+    </div>
+    <audio id="mainAudio" onended="onAudioComplete()" ontimeupdate="updateAudioTime()">
+        <source src="" type="audio/mpeg">
+    </audio>
+</div>
+
+<!-- Màn hình kết quả -->
+<div id="resultScreen" class="hidden min-h-screen p-4">
+    <div class="max-w-3xl mx-auto">
+        <div class="bg-white rounded-2xl shadow-2xl p-8 mt-8 fade-in">
+            <div class="text-center mb-6">
+                <img src="https://gofirst.pro/images/uploads/62/baseimg/logo_16541442053.png" alt="LIME Logo" class="w-32 h-32 mx-auto mb-4 object-contain">
+                <h1 class="text-3xl font-bold text-blue-700 mb-2">Trung Tâm Tiếng Anh LIME</h1>
+                <p class="text-blue-600">Hotline: 0976222792</p>
+            </div>
+            <div class="text-center mb-8">
+                <svg class="w-24 h-24 text-blue-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <h2 class="text-3xl font-bold text-blue-800 mb-4">Nộp bài thành công!</h2>
+                <p class="text-xl text-gray-700 mb-2">Cảm ơn em <span id="resultName" class="font-bold text-blue-700"></span> đã hoàn thành bài test!</p>
+            </div>
+            <div class="bg-blue-50 rounded-xl p-6 mb-6 border-2 border-blue-200">
+                <div class="text-center space-y-3">
+                    <p class="text-lg text-gray-700">📝 Bài làm của em đã được gửi về giáo viên</p>
+                    <p class="text-lg text-gray-700">⏰ Thời gian làm bài: <span id="resultTime" class="font-bold text-blue-700"></span></p>
+                    <p class="text-lg text-gray-700">📊 Giáo viên sẽ phân tích chi tiết và liên hệ phụ huynh</p>
+                </div>
+            </div>
+            <div class="bg-yellow-50 border-2 border-yellow-200 rounded-xl p-6 mb-6">
+                <div class="flex items-start gap-3">
+                    <svg class="w-6 h-6 text-yellow-600 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <div>
+                        <h3 class="font-bold text-yellow-800 mb-2">📞 Lưu ý quan trọng:</h3>
+                        <p class="text-yellow-700">Giáo viên sẽ liên hệ phụ huynh qua số <span id="resultPhone" class="font-bold"></span> để thông báo kết quả chi tiết. Vui lòng chú ý điện thoại nhé!</p>
+                    </div>
+                </div>
+            </div>
+            <button onclick="location.reload()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-6 rounded-lg transition duration-300 text-lg shadow-lg">Về trang chủ</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// *** THAY 2 DÒNG NÀY ***
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxR6tfIFzspwVUwZag9nGBuYUzTjJFCtWg3DJ4DxlmQ2TfDB8hMXw8aZWqlDzPKP1I/exec';
+const AUDIO_URL = 'https://res.cloudinary.com/dzby0c2up/video/upload/v1793106696/TOEFL_Junior_Practice_Test_-_Listening_eumjtd.mp3';
+
+const TOTAL = 42;
+
+// Đáp án đúng
+const correctAnswers = {
+    1:'A', 2:'D', 3:'D', 4:'B', 5:'B', 6:'A', 7:'B', 8:'C', 9:'B', 10:'A',
+    11:'C', 12:'A', 13:'B', 14:'C', 15:'C', 16:'A', 17:'D', 18:'A', 19:'B', 20:'B',
+    21:'C', 22:'A', 23:'D', 24:'C', 25:'A', 26:'D', 27:'D', 28:'B', 29:'A', 30:'C',
+    31:'A', 32:'C', 33:'B', 34:'A', 35:'B', 36:'D', 37:'B', 38:'C', 39:'B', 40:'D',
+    41:'A', 42:'C'
+};
+
+// PHÂN LOẠI KỸ NĂNG LISTENING
+const skillCategories = {
+    basicComprehension: {
+        questions: [1, 5, 7, 10, 12, 14, 15, 17, 18, 19, 20, 21, 22, 23, 24, 25],
+        name: 'Hiểu cơ bản (Basic Comprehension)',
+        level: 'A2'
+    },
+    mainIdea: {
+        questions: [4, 26, 30, 34, 39],
+        name: 'Ý chính (Main Idea)',
+        level: 'A2-B1'
+    },
+    details: {
+        questions: [27, 28, 29, 32, 33, 35, 37, 38, 41],
+        name: 'Chi tiết bài giảng (Details)',
+        level: 'B1'
+    },
+    inference: {
+        questions: [2, 6, 8, 11, 13, 16],
+        name: 'Suy luận (Inference)',
+        level: 'B1-B2'
+    },
+    purpose: {
+        questions: [3, 9, 31, 36, 40, 42],
+        name: 'Mục đích/Chức năng (Purpose/Function)',
+        level: 'B1'
+    }
+};
+
+// CÂU HỎI: [nội dung, A, B, C, D]
+const Q = [
+ ["What did the principal like best about the band?", "The students wrote their own music.", "The band played several kinds of music.", "The band played during the whole festival.", "The students played many different instruments."],
+ ["What will the class probably do next?", "Design a poster", "Color the leaves", "Eat lunch outside", "Collect fallen leaves"],
+ ["What is the purpose of the talk?", "To tell the students when they can begin working on their projects", "To request the students work with each other in pairs", "To specify the types of materials the students will use", "To inform the students they will need time to clean up"],
+ ["What is the teacher explaining?", "Why the city is located where it is", "How travel to the city has changed over time", "How the first tunnels in the city were built", "Why the river is important to the city's history"],
+ ["What does the teacher tell the students to do?", "Bring in some gardening tools", "Wear old clothes to school", "Look outside for seeds to plant", "Clean the dirt off their clothes"],
+ ["What is probably true about the dance?", "It is a very popular event.", "It is not usually held on a Friday.", "It will take place in the cafeteria.", "It is the first dance of the school year."],
+ ["What does the teacher ask?", "For someone to turn on the lights", "For someone to close the curtains", "For someone to move the television", "For someone to turn on the television"],
+ ["What will the students probably do next?", "Read a book", "Write an essay", "Watch a video", "Form discussion groups"],
+ ["What is the purpose of the talk?", "To help students understand the characters they are reading about", "To advise students on ways they can improve their writing", "To praise the students who wrote the best stories in class", "To describe the lives of some famous writers"],
+ ["What point does the speaker make about the alphabet in ancient Norway?", "It had very few letters.", "It was quite difficult to learn.", "It spread to other parts of the world.", "It was similar to the Chinese writing system."],
+ ["Where is the conversation probably taking place?", "Near the entrance to the city library", "At a table in the cafeteria", "On a sidewalk at school", "Inside the art building"],
+ ["What did the boy lose?", "A watch", "A book bag", "A library book", "His homework assignment"],
+ ["According to the conversation, what has not been decided yet?", "Who is going to study for the test", "Where a group is going to meet to study", "What topic the girl will choose for her art project", "When the boy will go to the cafeteria"],
+ ["What are the speakers happy to see when they enter the cafeteria?", "That their friends are there", "That their favorite foods are being served today", "That there are few people in the line", "That the cafeteria will stay open longer than usual"],
+ ["What do the speakers say about the drinks in the cafeteria?", "They are expensive.", "There are not any hot ones.", "There are many kinds to choose from.", "The types available change every day."],
+ ["What does the boy suggest the girl do?", "Try something new", "Ask if there is any soup", "Read the menu carefully", "Order the same meal that he orders"],
+ ["What will the boy NOT order for lunch?", "Juice", "Soup", "Salad", "Dessert"],
+ ["What is the girl on her way to do?", "Attend a meeting", "Pick up a schedule", "Return a library book", "Watch a performance"],
+ ["What does the girl say about her experience with dancing?", "She has tried only one style of dancing.", "She has been dancing for a long time.", "She sometimes teaches children how to dance.", "She has never danced in front of an audience."],
+ ["What happened because of a rainstorm?", "A walkway had to be closed.", "A building's roof was damaged.", "A basketball game was canceled.", "An assembly had to be rescheduled."],
+ ["What does the boy say he needs to do?", "Meet a teammate", "Go to a music class", "Return a basketball to a teacher", "Make a phone call in the main office"],
+ ["What does the boy ask the girl to do?", "Join a team", "Help him study", "Eat lunch with him", "Lend him a textbook"],
+ ["What subject is the girl interested in?", "Math", "History", "Science", "Geography"],
+ ["What does the boy offer to give the girl?", "A library card", "The title of a book", "A list of questions", "The names of students"],
+ ["Where will the event be held this year?", "In the gym", "In the library", "In the cafeteria", "In the science room"],
+ ["What is the main topic of the talk?", "Unusual foods served in castles", "The training of cooks in castles", "The earliest known castle kitchen", "The workings of a castle's kitchen"],
+ ["What was important about the location of a castle's kitchen?", "It was connected to the great hall.", "It was below the chef's living area.", "It allowed food to be served hot.", "It protected castle residents from fires."],
+ ["What does the teacher say about vegetables?", "They were expensive.", "They were grown in the castle's garden.", "They were bought from nearby villages.", "They were kept frozen in winter."],
+ ["According to the teacher, what was the chef's main responsibility?", "Managing the kitchen workers", "Buying the ingredients for meals", "Baking bread for everyone in the castle", "Presenting the food to the king and queen"],
+ ["What are the speakers mainly talking about?", "A new road in their town", "A new way to build roads", "The early history of roads", "The cost of building roads"],
+ ["Why does the woman talk about animals?", "To explain how the first roads were created", "To point out that long ago most people did not travel much", "To describe an event that happened on a road nearby", "To suggest that traveling on country roads can be dangerous"],
+ ["Why did people in England build ridge ways?", "To connect small towns to major cities", "To allow cars to drive around small towns", "To create roads that water would not wash away", "To create a separate road for transporting animals"],
+ ["What does the woman say about roads in ancient Greece?", "They were constructed on all of Greece's islands.", "They were not as good as roads built by the Romans.", "They often washed away in the rain.", "They connected Greece to the Roman Empire."],
+ ["What is the speaker mainly talking about?", "An unusual part of the Atlantic Ocean", "A kind of seaweed that is eaten by most fish", "The discovery of an uncommon type of seaweed", "A kind of sea animal that lives only in the Atlantic Ocean"],
+ ["According to the speaker, what do certain currents in the Atlantic Ocean do?", "They cause the Sargasso Sea to become smaller and smaller over time.", "They keep the water in the middle of the Sargasso Sea from moving much.", "They make fish from the Sargasso Sea drift to other places.", "They prevent seaweed in the Sargasso Sea from being eaten by sea creatures."],
+ ["What is the speaker explaining when he mentions sailing ships?", "How the Sargasso Sea was discovered", "How seaweed got into the Sargasso Sea", "How unusual the water in the Sargasso Sea looks", "How little wind there is in the Sargasso Sea"],
+ ["What is sargassum?", "A species of fish", "A kind of seaweed", "A fast-moving current", "A slow-moving sailing ship"],
+ ["According to the speaker, what is surprising about some animal species that live in the Sargasso Sea?", "They have short life spans.", "They are larger than expected.", "They are usually found closer to land.", "They are not native to the Atlantic Ocean."],
+ ["What is the main topic of the talk?", "The eating habits of large sea animals", "An animal with an unusual physical feature", "An animal with a very long life", "Mythical creatures of Europe"],
+ ["Why does the teacher mention unicorns?", "To explain why people thought narwhals were also mythical", "To discuss why it is so difficult to find narwhals", "To tell the class what they will learn about next week", "To describe what a narwhal's tooth looks like"],
+ ["Why did people in Europe hundreds of years ago think the narwhal was special?", "They thought they could use its tooth to make medicine.", "They thought it brought good luck.", "They thought it was a type of mermaid.", "They thought it was a highly intelligent animal."],
+ ["Why does the teacher mention peacocks?", "To demonstrate how valuable narwhals are", "To describe the different colors of male narwhals", "To help explain the purpose of the male narwhal's tooth", "To talk about a popular animal in medieval Europe"]
+];
+
+const questions = Q.map((q, i) => ({
+    num: i + 1,
+    part: i < 10 ? 1 : (i < 25 ? 2 : 3),
+    text: q[0],
+    options: { A: q[1], B: q[2], C: q[3], D: q[4] }
+}));
+
+let studentInfo = {};
+let answers = {};
+let startTime;
+let audioElement = null;
+let isAudioPlaying = false;
+let submitted = false;
+
+function startTest() {
+    const name = document.getElementById('studentName').value.trim();
+    const classVal = document.getElementById('studentClass').value.trim();
+    const phone = document.getElementById('parentPhone').value.trim();
+
+    if (!name || !classVal || !phone) {
+        alert('Vui lòng điền đầy đủ thông tin!');
+        return;
+    }
+
+    studentInfo = { name, class: classVal, parentPhone: phone };
+
+    document.getElementById('infoScreen').classList.add('hidden');
+    document.getElementById('testScreen').classList.remove('hidden');
+    document.getElementById('audioPlayerMain').classList.remove('hidden');
+    document.getElementById('headerName').textContent = name;
+    document.getElementById('headerClass').textContent = classVal;
+
+    renderQuestions();
+    setupAudio();
+    startTime = new Date();
+}
+
+function setupAudio() {
+    audioElement = document.getElementById('mainAudio');
+    audioElement.src = AUDIO_URL;
+    audioElement.addEventListener('canplaythrough', function() {
+        document.getElementById('audioStatus').textContent = 'Audio: Ready to play';
+    });
+    audioElement.addEventListener('error', function() {
+        document.getElementById('audioStatus').textContent = 'Audio: Error loading';
+        console.error('Lỗi tải audio:', audioElement.error);
+    });
+    audioElement.load();
+}
+
+function toggleAudio() {
+    if (!audioElement) return;
+    const playBtn = document.getElementById('playBtnMain');
+    const statusSpan = document.getElementById('audioStatus');
+
+    if (isAudioPlaying) {
+        audioElement.pause();
+        playBtn.textContent = '▶';
+        statusSpan.textContent = 'Audio: Paused';
+        isAudioPlaying = false;
+    } else {
+        audioElement.play();
+        playBtn.textContent = '⏸';
+        statusSpan.textContent = 'Audio: Playing';
+        isAudioPlaying = true;
+    }
+}
+
+function setVolume(value) {
+    if (audioElement) audioElement.volume = value / 100;
+}
+
+function updateAudioTime() {
+    if (!audioElement) return;
+    document.getElementById('audioTime').textContent = `${formatTime(audioElement.currentTime)} / ${formatTime(audioElement.duration)}`;
+}
+
+function formatTime(seconds) {
+    if (isNaN(seconds)) return '00:00';
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+}
+
+function onAudioComplete() {
+    document.getElementById('playBtnMain').textContent = '✓';
+    document.getElementById('audioStatus').textContent = 'Audio: Completed';
+    isAudioPlaying = false;
+
+    setTimeout(() => {
+        alert('⏰ Đã hết thời gian làm bài! Hệ thống sẽ tự động nộp bài.');
+        submitTest(true);
+    }, 2000);
+}
+
+function renderQuestions() {
+    const container = document.getElementById('questionsContainer');
+    let html = '';
+    let currentPart = 0;
+
+    const partTitles = {
+        1: 'Part 1: Listen to talks and answer the questions',
+        2: 'Part 2: Listen to conversations and answer the questions',
+        3: 'Part 3: Listen to academic talks and discussions and answer the questions'
+    };
+
+    questions.forEach((q) => {
+        if (q.part !== currentPart) {
+            currentPart = q.part;
+            html += `
+            <div class="bg-blue-600 text-white p-4 rounded-xl mb-6 mt-8">
+                <h3 class="text-2xl font-bold text-center">${partTitles[currentPart]}</h3>
+            </div>`;
+        }
+
+        html += `
+        <div class="border-2 border-blue-200 rounded-xl p-6 mb-6 bg-gray-50">
+            <div class="flex gap-4">
+                <div class="flex-shrink-0">
+                    <div class="w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">${q.num}</div>
+                </div>
+                <div class="flex-1">
+                    <p class="text-gray-800 mb-4 text-lg font-semibold mt-1">${q.text}</p>
+                    <div class="space-y-2 mt-4">`;
+
+        Object.entries(q.options).forEach(([key, value]) => {
+            html += `
+                        <label class="flex items-start gap-3 p-4 rounded-lg cursor-pointer transition-all bg-white border-2 border-gray-300 hover:bg-blue-50 answer-option" data-question="${q.num}" data-answer="${key}">
+                            <input type="radio" name="q${q.num}" value="${key}" onchange="handleAnswer(${q.num}, '${key}')" class="mt-1 w-5 h-5 text-blue-600">
+                            <span class="flex-1 text-gray-700"><span class="font-semibold text-blue-700">${key}.</span> ${value}</span>
+                        </label>`;
+        });
+
+        html += `
+                    </div>
+                </div>
+            </div>
+        </div>`;
+    });
+
+    container.innerHTML = html;
+}
+
+function handleAnswer(questionNum, answer) {
+    answers[questionNum] = answer;
+    updateProgress();
+
+    document.querySelectorAll(`label[data-question="${questionNum}"]`).forEach(label => {
+        if (label.dataset.answer === answer) {
+            label.classList.remove('bg-white', 'border-gray-300');
+            label.classList.add('bg-blue-100', 'border-blue-500');
+        } else {
+            label.classList.remove('bg-blue-100', 'border-blue-500');
+            label.classList.add('bg-white', 'border-gray-300');
+        }
+    });
+}
+
+function updateProgress() {
+    const answered = Object.keys(answers).length;
+    const percent = Math.round((answered / TOTAL) * 100);
+
+    document.getElementById('progress').textContent = answered;
+    document.getElementById('progressPercent').textContent = percent + '%';
+    document.getElementById('progressBar').style.width = percent + '%';
+
+    const unanswered = TOTAL - answered;
+    if (unanswered > 0) {
+        document.getElementById('warningBox').classList.remove('hidden');
+        document.getElementById('unansweredCount').textContent = unanswered;
+    } else {
+        document.getElementById('warningBox').classList.add('hidden');
+    }
+}
+
+// ========== PHÂN TÍCH CHI TIẾT ==========
+
+function calculateSkillScores(answers) {
+    const scores = {};
+    for (const [skill, data] of Object.entries(skillCategories)) {
+        let correct = 0;
+        data.questions.forEach(qNum => {
+            if (answers[qNum] === correctAnswers[qNum]) correct++;
+        });
+        scores[skill] = {
+            correct: correct,
+            total: data.questions.length,
+            percentage: Math.round((correct / data.questions.length) * 100)
+        };
+    }
+    return scores;
+}
+
+// TOEFL Junior nằm trong khoảng A2 - B2
+function estimateCEFRLevel(totalScore, skillScores) {
+    const scaled = 200 + totalScore;
+    let level;
+    if (scaled >= 290) level = 'B2';
+    else if (scaled >= 245) level = 'B1';
+    else if (scaled >= 210) level = 'A2';
+    else level = 'Below A2';
+    return `${level} (điểm quy đổi ước tính ~${scaled}/300)`;
+}
+
+function generateOverallAssessment(totalScore, cefrLevel, skillScores) {
+    let assessment = `Học sinh đạt ${totalScore}% (${cefrLevel}). `;
+    if (totalScore >= 80) {
+        assessment += 'Kỹ năng nghe tiếng Anh rất tốt, có thể hiểu hội thoại và bài giảng học thuật. ';
+    } else if (totalScore >= 60) {
+        assessment += 'Kỹ năng nghe tiếng Anh khá, có thể hiểu ý chính và một số chi tiết quan trọng. ';
+    } else if (totalScore >= 40) {
+        assessment += 'Kỹ năng nghe tiếng Anh cơ bản, cần cải thiện thêm để theo kịp các bài nghe học thuật. ';
+    } else {
+        assessment += 'Kỹ năng nghe tiếng Anh còn yếu, cần tập trung luyện nghe hội thoại và câu đơn giản hàng ngày. ';
+    }
+    return assessment;
+}
+
+function analyzeListeningSkills(skillScores) {
+    let analysis = 'Kỹ năng nghe: ';
+    const strengths = [];
+    const weaknesses = [];
+
+    const rules = [
+        ['basicComprehension', 'hiểu cơ bản', 'hiểu hội thoại/thông báo ngắn (cần luyện nghe từ vựng đời sống học đường)'],
+        ['details', 'nghe chi tiết bài giảng', 'nghe chi tiết bài giảng (cần ghi chú từ khóa)'],
+        ['mainIdea', 'xác định ý chính', 'xác định ý chính (cần tập tóm tắt nội dung)'],
+        ['inference', 'suy luận', 'suy luận ẩn ý (cần luyện đoán nghĩa)'],
+        ['purpose', 'hiểu mục đích', 'hiểu mục đích giao tiếp (cần luyện function language)']
+    ];
+
+    rules.forEach(([key, strong, weak]) => {
+        const p = skillScores[key].percentage;
+        if (p >= 75) strengths.push(strong);
+        else if (p < 60) weaknesses.push(weak);
+    });
+
+    if (strengths.length > 0) analysis += `Điểm mạnh: ${strengths.join(', ')}. `;
+    if (weaknesses.length > 0) analysis += `Cần cải thiện: ${weaknesses.join(', ')}. `;
+    else analysis += 'Tất cả các kỹ năng nghe đều tốt. ';
+
+    return analysis;
+}
+
+function generateDetailedStrengths(skillScores) {
+    const strengths = [];
+    for (const [skill, data] of Object.entries(skillScores)) {
+        if (data.percentage >= 75) strengths.push(`${skillCategories[skill].name} (${data.percentage}%)`);
+    }
+    return strengths.length === 0 ? 'Cần cố gắng thêm để phát triển điểm mạnh' : strengths.join(', ');
+}
+
+function generateDetailedWeaknesses(skillScores) {
+    const weaknesses = [];
+    for (const [skill, data] of Object.entries(skillScores)) {
+        if (data.percentage < 60) weaknesses.push(`${skillCategories[skill].name} (${data.percentage}%) - Trình độ ${skillCategories[skill].level}`);
+    }
+    return weaknesses.length === 0 ? 'Không có điểm yếu đáng kể' : weaknesses.join(' | ');
+}
+
+function generateDetailedRecommendations(totalScore, skillScores, cefrLevel) {
+    let r = '';
+
+    if (skillScores.basicComprehension.percentage < 60) {
+        r += '🎧 HIỂU CƠ BẢN: (1) Nghe 15-20 phút mỗi ngày với hội thoại học đường; (2) Luyện dictation câu ngắn; (3) Học từ vựng về trường học, hoạt động ngoại khóa. ';
+    }
+    if (skillScores.details.percentage < 60) {
+        r += '🔍 CHI TIẾT: (1) Đọc câu hỏi trước khi nghe; (2) Ghi chú từ khóa (số liệu, tên, nguyên nhân); (3) Luyện nghe bài giảng ngắn có chủ đề khoa học, lịch sử. ';
+    }
+    if (skillScores.mainIdea.percentage < 60) {
+        r += '💡 Ý CHÍNH: (1) Chú ý câu mở đầu và câu kết của bài nói; (2) Luyện tóm tắt bài nghe bằng 1 câu; (3) Tìm ý được lặp lại nhiều lần. ';
+    }
+    if (skillScores.inference.percentage < 60) {
+        r += '🧠 SUY LUẬN: (1) Học cách "nghe giữa các dòng"; (2) Chú ý ngữ điệu và cảm xúc người nói; (3) Luyện đoán điều sắp xảy ra tiếp theo. ';
+    }
+    if (skillScores.purpose.percentage < 60) {
+        r += '🎯 MỤC ĐÍCH: (1) Học function language (mời, từ chối, gợi ý, giải thích); (2) Chú ý dạng câu hỏi "Why does the speaker mention...?"; (3) Luyện với thông báo và bài giảng ngắn. ';
+    }
+
+    if (cefrLevel.startsWith('Below A2')) {
+        r += '\n🎯 MỤC TIÊU: Để đạt A2, cần: (1) Hiểu ý chính của thông báo ngắn trên lớp khi được nói rõ; (2) Nắm chi tiết được nhắc lại trong bài nói/hội thoại ngắn; (3) Hiểu cách diễn đạt lại (paraphrase) đơn giản và mục đích của người nói. ';
+    } else if (cefrLevel.startsWith('A2')) {
+        r += '\n🎯 MỤC TIÊU: Để đạt B1, cần: (1) Hiểu ý chính được nêu rõ trong bài nói dài, cả học thuật và đời thường; (2) Nắm chi tiết quan trọng; (3) Suy luận được trong bài nói ngắn; (4) Làm quen một số thành ngữ thông dụng. ';
+    } else if (cefrLevel.startsWith('B1')) {
+        r += '\n🎯 MỤC TIÊU: Để đạt B2, cần: (1) Hiểu ý chính cả khi không nói thẳng; (2) Suy luận từ ngữ điệu và trọng âm của người nói; (3) Hiểu thành ngữ trong bài nói dài, phức tạp; (4) Hiểu người nói dùng thông tin để làm gì (so sánh, dẫn chứng cho lập luận). ';
+    } else {
+        r += '\n🎯 MỤC TIÊU: Duy trì B2: (1) Nghe podcast, TED-Ed, bài giảng học thuật; (2) Mở rộng từ vựng academic và thành ngữ; (3) Luyện thêm các dạng câu hỏi suy luận và "why does the speaker mention...?". ';
+    }
+
+    r += '\n📖 TÀI LIỆU ĐỀ XUẤT: ';
+    if (totalScore < 50) {
+        r += 'BBC Learning English (Lower-Intermediate), ESL Lab, British Council LearnEnglish Teens. ';
+    } else if (totalScore < 75) {
+        r += 'BBC 6 Minute English, TED-Ed, VOA Learning English, TOEFL Junior Official Practice. ';
+    } else {
+        r += 'TED Talks, National Geographic Kids/Explorer, Crash Course, TOEFL iBT Listening practice. ';
+    }
+
+    r += '\n💪 LUYỆN TẬP HÀNG NGÀY: (1) Nghe 20-30 phút mỗi ngày; (2) Shadowing; (3) Dictation 5 câu mỗi ngày; (4) Xem video học thuật có phụ đề tiếng Anh.';
+    return r.trim();
+}
+
+async function submitTest(auto) {
+    if (submitted) return;
+
+    const unanswered = TOTAL - Object.keys(answers).length;
+    if (unanswered > 0 && !auto) {
+        const ok = window.confirm(`Bạn còn ${unanswered} câu chưa trả lời.\n\nBạn có chắc muốn nộp bài không?`);
+        if (!ok) return;
+    }
+    submitted = true;
+
+    if (audioElement) audioElement.pause();
+
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = `<div class="spinner"></div><span>Đang phân tích và nộp bài...</span>`;
+
+    let correctCount = 0;
+    let wrongQuestions = [];
+
+    Object.keys(correctAnswers).forEach(q => {
+        if (answers[q] === correctAnswers[q]) {
+            correctCount++;
+        } else if (answers[q]) {
+            wrongQuestions.push(q);
+        }
+    });
+
+    const wrongQuestionsText = wrongQuestions.length > 0 ? wrongQuestions.join(', ') : 'Không có';
+
+    const totalScore = Math.round((correctCount / TOTAL) * 100);
+    const endTime = new Date();
+    const timeUsed = Math.round((endTime - startTime) / 60000);
+
+    const skillScores = calculateSkillScores(answers);
+    const cefrLevel = estimateCEFRLevel(totalScore, skillScores);
+
+    const dataToSend = {
+        timestamp: new Date().toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' }),
+        name: studentInfo.name,
+        class: studentInfo.class,
+        parentPhone: studentInfo.parentPhone,
+        testType: 'TOEFL Junior Listening Test',
+        score: totalScore,
+        correctAnswers: correctCount,
+        totalQuestions: TOTAL,
+        timeUsed: timeUsed + ' phút',
+        cefrLevel: cefrLevel,
+        basicComprehensionScore: skillScores.basicComprehension.percentage,
+        mainIdeaScore: skillScores.mainIdea.percentage,
+        detailsScore: skillScores.details.percentage,
+        inferenceScore: skillScores.inference.percentage,
+        purposeScore: skillScores.purpose.percentage,
+        overallAssessment: generateOverallAssessment(totalScore, cefrLevel, skillScores),
+        listeningAnalysis: analyzeListeningSkills(skillScores),
+        strengthsDetail: generateDetailedStrengths(skillScores),
+        weaknessesDetail: generateDetailedWeaknesses(skillScores),
+        recommendationsDetail: generateDetailedRecommendations(totalScore, skillScores, cefrLevel),
+        wrongQuestions: wrongQuestionsText,
+        answers: JSON.stringify(answers)
+    };
+
+    try {
+        await fetch(GOOGLE_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(dataToSend)
+        });
+        console.log('Đã gửi kết quả chi tiết lên Google Sheets');
+    } catch (error) {
+        console.error('Lỗi khi gửi dữ liệu:', error);
+    }
+
+    document.getElementById('testScreen').classList.add('hidden');
+    document.getElementById('audioPlayerMain').classList.add('hidden');
+    document.getElementById('resultScreen').classList.remove('hidden');
+
+    document.getElementById('resultName').textContent = studentInfo.name;
+    document.getElementById('resultTime').textContent = timeUsed + ' phút';
+    document.getElementById('resultPhone').textContent = studentInfo.parentPhone;
+}
+</script>
+
+</body>
+</html>
