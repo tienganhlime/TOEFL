@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TOEFL Junior Standard Test - Trung Tâm Tiếng Anh LIME</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 50%, #A5D6A7 100%);
+        }
+        .fade-in { animation: fadeIn 0.5s ease-in; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #16a34a;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .reading-passage {
+            background: #F1F8E9;
+            border-left: 4px solid #66BB6A;
+            padding: 20px;
+            margin-bottom: 24px;
+            border-radius: 8px;
+            line-height: 1.8;
+        }
+        .passage-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #2E7D32;
+            margin-bottom: 16px;
+            border-bottom: 2px solid #66BB6A;
+            padding-bottom: 8px;
+        }
+        .blank {
+            display: inline-block;
+            background: #C8E6C9;
+            color: #1B5E20;
+            font-weight: bold;
+            border-radius: 6px;
+            padding: 0 8px;
+            margin: 0 2px;
+            border-bottom: 2px solid #2E7D32;
+        }
+        .part-banner {
+            background: linear-gradient(90deg, #2E7D32, #66BB6A);
+            color: #fff;
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin: 32px 0 16px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Màn hình nhập thông tin -->
+<div id="infoScreen" class="min-h-screen p-4 fade-in">
+    <div class="max-w-2xl mx-auto">
+        <div class="bg-white rounded-2xl shadow-2xl p-8 mt-8">
+            <div class="text-center mb-8">
+                <img src="https://gofirst.pro/images/uploads/62/baseimg/logo_16541442053.png"
+                     alt="LIME Logo"
+                     class="w-32 h-32 mx-auto mb-4 object-contain">
+                <h1 class="text-4xl font-bold text-green-700 mb-2">Trung Tâm Tiếng Anh LIME</h1>
+                <p class="text-green-600 text-lg">Hotline: 0976222792</p>
+                <div class="mt-4 h-1 w-32 bg-green-500 mx-auto rounded"></div>
+            </div>
+
+            <div class="bg-green-50 rounded-xl p-6 mb-6">
+                <h2 class="text-2xl font-bold text-green-800 mb-4">TOEFL JUNIOR STANDARD - TEST 1</h2>
+                <div class="space-y-2 text-green-700">
+                    <p>📝 Số câu hỏi: 84 câu (Language Form &amp; Meaning: 42 câu + Reading: 42 câu)</p>
+                    <p>⏰ Thời gian: 75 phút</p>
+                    <p>✅ Làm bài trực tuyến, chấm điểm tự động</p>
+                    <p>📊 Phân tích chi tiết năng lực học sinh theo thang điểm TOEFL Junior &amp; CEFR</p>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-green-800 font-semibold mb-2">Họ và tên học sinh *</label>
+                    <input type="text" id="studentName"
+                        class="w-full px-4 py-3 border-2 border-green-300 rounded-lg focus:border-green-500 focus:outline-none"
+                        placeholder="Nhập họ tên">
+                </div>
+                <div>
+                    <label class="block text-green-800 font-semibold mb-2">Lớp *</label>
+                    <input type="text" id="studentClass"
+                        class="w-full px-4 py-3 border-2 border-green-300 rounded-lg focus:border-green-500 focus:outline-none"
+                        placeholder="Nhập lớp">
+                </div>
+                <div>
+                    <label class="block text-green-800 font-semibold mb-2">Số điện thoại phụ huynh *</label>
+                    <input type="tel" id="parentPhone"
+                        class="w-full px-4 py-3 border-2 border-green-300 rounded-lg focus:border-green-500 focus:outline-none"
+                        placeholder="Nhập số điện thoại">
+                </div>
+            </div>
+
+            <button onclick="startTest()"
+                class="w-full mt-6 bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-6 rounded-lg transition duration-300 text-lg shadow-lg">
+                BẮT ĐẦU LÀM BÀI
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Màn hình làm bài -->
+<div id="testScreen" class="hidden min-h-screen p-4">
+    <div class="max-w-5xl mx-auto">
+        <div class="bg-white rounded-2xl shadow-2xl p-6 mb-6 sticky top-4 z-10">
+            <div class="flex justify-between items-center flex-wrap gap-4">
+                <div class="flex items-center gap-3">
+                    <img src="https://gofirst.pro/images/uploads/62/baseimg/logo_16541442053.png"
+                         alt="LIME Logo" class="w-12 h-12 object-contain">
+                    <div>
+                        <h1 class="text-2xl font-bold text-green-700">Trung Tâm Tiếng Anh LIME</h1>
+                        <p class="text-green-600 text-sm">Hotline: 0976222792</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-6">
+                    <div class="text-right">
+                        <p class="text-sm text-gray-600">Học sinh: <span id="headerName"></span></p>
+                        <p class="text-sm text-gray-600">Lớp: <span id="headerClass"></span></p>
+                    </div>
+                    <div class="flex items-center gap-2 bg-green-100 px-4 py-2 rounded-lg">
+                        <svg class="w-6 h-6" id="clockIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <span id="timer" class="text-2xl font-bold text-green-600">75:00</span>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-4">
+                <div class="flex justify-between text-sm text-gray-600 mb-1">
+                    <span>Tiến độ: <span id="progress">0</span>/84 câu</span>
+                    <span id="progressPercent">0%</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-3">
+                    <div id="progressBar" class="bg-green-600 h-3 rounded-full transition-all duration-300" style="width: 0%"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-2xl p-8">
+            <h2 class="text-3xl font-bold text-green-800 mb-6 text-center">TOEFL JUNIOR STANDARD - TEST 1</h2>
+            <div id="questionsContainer" class="space-y-8"></div>
+
+            <div class="mt-8 pt-6 border-t-2 border-green-200">
+                <button onclick="submitTest()" id="submitBtn"
+                    class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-6 rounded-lg transition duration-300 text-xl shadow-lg flex items-center justify-center gap-2">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    NỘP BÀI
+                </button>
+                <div id="warningBox" class="hidden mt-4 p-4 bg-yellow-50 border-2 border-yellow-300 rounded-lg flex items-start gap-2">
+                    <svg class="w-5 h-5 text-yellow-600 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                    </svg>
+                    <p class="text-yellow-800 text-sm">
+                        Bạn còn <span id="unansweredCount">84</span> câu chưa trả lời. Hãy kiểm tra lại trước khi nộp bài!
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Màn hình kết quả -->
+<div id="resultScreen" class="hidden min-h-screen p-4">
+    <div class="max-w-3xl mx-auto">
+        <div class="bg-white rounded-2xl shadow-2xl p-8 mt-8 fade-in">
+            <div class="text-center mb-6">
+                <img src="https://gofirst.pro/images/uploads/62/baseimg/logo_16541442053.png"
+                     alt="LIME Logo" class="w-32 h-32 mx-auto mb-4 object-contain">
+                <h1 class="text-3xl font-bold text-green-700 mb-2">Trung Tâm Tiếng Anh LIME</h1>
+                <p class="text-green-600">Hotline: 0976222792</p>
+            </div>
+            <div class="text-center mb-8">
+                <svg class="w-24 h-24 text-green-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <h2 class="text-3xl font-bold text-green-800 mb-4">Nộp bài thành công!</h2>
+                <p class="text-xl text-gray-700 mb-2">Cảm ơn em <span id="resultName" class="font-bold text-green-700"></span> đã hoàn thành bài test!</p>
+            </div>
+            <div class="bg-green-50 rounded-xl p-6 mb-6 border-2 border-green-200">
+                <div class="text-center space-y-3">
+                    <p class="text-lg text-gray-700">📝 Bài làm của em đã được gửi về giáo viên</p>
+                    <p class="text-lg text-gray-700">⏰ Thời gian làm bài: <span id="resultTime" class="font-bold text-green-700"></span></p>
+                    <p class="text-lg text-gray-700">📊 Giáo viên sẽ phân tích chi tiết và liên hệ phụ huynh</p>
+                </div>
+            </div>
+            <div class="bg-blue-50 border-2 border-blue-200 rounded-xl p-6 mb-6">
+                <div class="flex items-start gap-3">
+                    <svg class="w-6 h-6 text-blue-600 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <div>
+                        <h3 class="font-bold text-blue-800 mb-2">📞 Lưu ý quan trọng:</h3>
+                        <p class="text-blue-700">
+                            Giáo viên sẽ liên hệ phụ huynh qua số <span id="resultPhone" class="font-bold"></span> để thông báo kết quả chi tiết.
+                            Vui lòng chú ý điện thoại nhé!
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <button onclick="location.reload()"
+                class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-6 rounded-lg transition duration-300 text-lg shadow-lg">
+                Về trang chủ
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+// *** QUAN TRỌNG: Dán URL Google Apps Script của bạn vào đây ***
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxc5TreGJHo22cbmtDmWMMumTBaBuivyZxc1LdHtb3x6U9VYIt_hiwwU6-hzygL7JU/exec';
+
+const TOTAL_Q = 84;
+const TEST_SECONDS = 75 * 60;
+
+// ================= BÀI ĐỌC / VĂN BẢN =================
+// {{n}} = chỗ trống số n (phần Language Form and Meaning)
+const P = {
+// ---------- LANGUAGE FORM AND MEANING ----------
+l1: { title: 'Note', html: `Lisa:<br><br>{{1}} you were at basketball practice today, your teacher, Mr. Morris, called on the phone to talk with you. He {{2}} one of his other classes on a field trip to the aquarium this Saturday. A student in that class is sick and {{3}} to go. Mr. Morris wants to know whether you'd like to take {{4}} on the trip. He said that he is {{5}} you the chance first because of the great report you wrote about whales. You'll need to let him know tomorrow.<br><br>Love,<br>Mom` },
+l2: { title: 'Announcement', html: `A man's wristwatch {{6}} in the lobby of Luigi's Pizza Restaurant on Tuesday, February 16. A restaurant worker {{7}} the watch after the restaurant had closed that evening. Anyone {{8}} at the restaurant that day and is missing a watch should call Luigi's at 555-1953. Callers will be asked {{9}} of the watch.` },
+l3: { title: 'Announcement', html: `{{10}} from Barksdale High School won this year's regional mathematics competition. Ellen Murphy was among ten finalists in the last round of the competition. The final question was a very {{11}} algebra problem. The first student to answer the question correctly was named {{12}} One student finished the problem {{13}} Ms. Murphy, but his answer was incorrect. Ms. Murphy solved the problem correctly and took the grand prize.` },
+l4: { title: 'Part of a Short Story', html: `When Dan knocked on the door of the old gray house, he was a little {{14}} His friends at school had said that the woman who lived in the house was unfriendly, but Dan was sure that {{15}} in his yard was hers. He wanted to take it to her.<br><br>
+"Hello," a woman's voice responded to his knock. "Who is it?"<br><br>
+"Hi. I'm your neighbor from down the street," Dan said {{16}} she opened the door a few centimeters. "Is this cat yours?"<br><br>
+"Oh, my goodness," the woman said with a big smile. She pulled the door open wide. "Yes, this is Daisy, and I've been worried about her! Thank you so much for {{17}} her back!"` },
+l5: { title: 'Notice', html: `{{18}} next Tuesday, the science building will be under construction. Workers will {{19}} repairs to the outside of the building for approximately four weeks. While this work is being {{20}} most classes will continue as usual inside the building. However, if any classes need to be moved {{21}} to other rooms, teachers will inform their students. {{22}} the construction, the front entrance to the science building will be closed. {{23}} all students will have to use the doors on the north side to enter the building. Also, please remember {{24}} of the way of all construction equipment. Anyone {{25}} about the upcoming construction work should contact the school's main office.` },
+l6: { title: 'Magazine Article', html: `Unlike some other sharks, the basking shark is {{26}} humans. Growing to a size {{27}} than that of the average human, this giant fish simply ignores divers who swim up to it. The diet of a basking shark {{28}} of fish and small animals such as squid, shrimp, and crabs. When it is hungry, it looks for places {{29}} great numbers of these small animals can be found. Once it locates an area {{30}} with fish, a basking shark simply opens its huge mouth and slowly swims through it. {{31}} into its mouth and continues out through a special filter structure that traps the small fish and other creatures. Although this method {{32}} the shark to move quickly, it still requires a lot of effort. {{33}} a basking shark will filter up to two thousand tons of water per hour.` },
+l7: { title: 'Essay', html: `People's behavior during public events has changed {{34}} the years, perhaps because views on {{35}} appropriate have changed. During a classical music concert, for example, {{36}} until the musicians finish playing the composition. It would be hard {{37}} the audience clapping in the middle of a performance. It may come as a surprise to many, however, that long ago, this is exactly {{38}} The audience laughed loudly, clapped, and {{39}} great moments. That was {{40}} people showed their regard for a performer's skills. One reason that people's behavior was so {{41}} may be that in the past, classical music concerts were more like today's pop music shows. Long ago, classical music was not thought to be {{42}} it is now.` },
+// ---------- READING COMPREHENSION ----------
+r1: { title: 'Note from a Teacher', html: `Dear Cathy,<br><br>
+Thanks for volunteering to clean up the science laboratory this afternoon. Usually, when a student does <u>this</u> for the first time, I go to the lab to show him or her exactly what to do. However, today I have a teacher's staff meeting at 3:30, so I can't be there. Still, I'm sure everything will be fine, since you have worked in the lab many times. Here is what you should do:<br><br>
+1. Clean all the glass containers that were used in class today.<br>
+2. After washing the containers, place them upside down on a towel to dry.<br>
+3. Wipe down all the worktables with a wet cloth.<br>
+4. Put all the microscopes that have been left out back on the equipment shelf.<br>
+5. Sweep the floor.<br>
+6. Put the trash outside the door.<br>
+7. Turn off the lights and lock the door when you leave.<br><br>
+If you have any questions, please ask Ms. Edwards in the classroom next door. You can return the key to me tomorrow when we have class at 10:30.<br><br>
+Thank you so much for your help!<br>— Mr. Marston` },
+r2: { title: 'Letter in a School Newspaper', html: `This is my first year attending Wilson Middle School. Last year I went to a different middle school. Over the summer my father got a new job, so our whole family moved. Now I go to Wilson.<br><br>
+I want to make some comments based on my unique <u>perspective</u> as someone who has attended two different middle schools. For example, I was surprised by all the complaints that the students at Wilson make about the food in the cafeteria. Either they don't like it, or they want more choices. But I like the food. The dishes are pretty tasty. And as for choices, at the school I went to last year there were never more than two lunch options each day. Sometimes there was only <u>one</u>!<br><br>
+However, I don't want anyone to think that I have a negative opinion of the Wilson students. Actually, I have been impressed with how involved the students here are. I plan to participate in some of the special clubs here that are organized by students, like the photography club and the hiking club. At my last school, students were not as actively involved in forming clubs.` },
+r3: { title: 'Story: Cricket', html: `Cricket—how I <u>detested</u> this game when I was young! My family would spend hours and hours watching it on television while I angrily waited for it to end. Every game seemed the same. Yes, one team won and the other one lost, but it was always the same game—some men pitching a ball, some running back and forth.<br><br>
+Then something happened. I became old enough to start playing cricket myself with the other kids in my neighborhood. We found a place to play wherever we could put up a wicket. We played on the street, in the backyard—even on the tops of buildings, believe it or not!<br><br>
+I can recall so clearly the sounds of the ball hitting the bat and the quick running feet. I can still feel the sun on my face as I played and the bruises and scratches from falling down. I can still see the blue sky fading to darkness behind the buildings as our games continued into the night. It became my favorite thing in the world. Now I watch it not with anger, but with <u>fond</u> memories of the endless days and nights spent playing the game.` },
+r4: { title: 'Story: Edward and Lucas', html: `Edward rang the Millers' doorbell. Mr. and Mrs. Miller had moved into the neighborhood last month. They had a five-year-old son, and they had asked Edward to watch him that evening while they went out.<br><br>
+"Hello, Edward," Mrs. Miller said as she opened the door.<br><br>
+Mr. Miller stood behind her with a boy at his side. "This is Lucas," Mr. Miller said. "Lucas, this is Edward. He will watch you tonight while Mom and I are out."<br><br>
+The little boy waved shyly to Edward. The Millers asked Edward to <u>entertain</u> Lucas for an hour and then put him in bed.<br><br>
+After Lucas's parents left, Edward went with the boy to his room. They played some games and built a tower out of wooden blocks.<br><br>
+"It's time for you to go to sleep now," Edward said. Lucas looked disappointed, but he changed into his pajamas and got into bed.<br><br>
+"Will you read me a story?" he asked Edward.<br><br>
+Edward took a picture book from the shelf and read it to Lucas. When he finished reading the book to Lucas, he turned out the light and said good night. But as soon as Edward left the room, Lucas called out to him.<br><br>
+"What's wrong?" Edward asked.<br><br>
+"I'm afraid of the dark," Lucas explained.<br><br>
+Edward turned on the small light by Lucas's bed. "Good night," Edward said again.<br><br>
+Five minutes later, Lucas cried out again.<br><br>
+"What's wrong now?" Edward asked.<br><br>
+"I thought I heard a sound," Lucas said. "I think there might be a monster under my bed."<br><br>
+Edward explained that there was no monster under the bed, but Lucas was still afraid. Finally, Edward went to the kitchen and found a flashlight. He shined the flashlight under Lucas's bed. "See?" he said. "No monster."<br><br>
+"Will you stay with me in case <u>one</u> comes?" Lucas begged.<br><br>
+Edward could see that the little boy was frightened. He agreed to sit in the chair by Lucas's bed, with the flashlight in his hand.<br><br>
+Edward sat in the chair, waiting for Lucas to fall asleep. The dim light in the room and the soft chair made Edward feel tired, too. He closed his eyes.<br><br>
+The next thing he knew someone was shaking him gently. Edward opened his eyes and saw Mr. and Mrs. Miller.<br><br>
+"We're home," Mrs. Miller whispered. "Thank you for taking care of Lucas. We had a wonderful evening."<br><br>
+Edward shook himself in amazement. Was the evening over already?` },
+r5: { title: 'Newspaper Article', html: `Marina Hills High School is fighting pollution in an unusual way. It's planting trees!<br><br>
+In an effort to fight pollution and help the environment, the Marina Hills Ecology Club offers free trees to institutions willing to plant them on their grounds. Among those that took advantage of the offer was Marina Hills High School. After consulting with his teachers on where to plant the trees, Principal Max Webb contacted the Ecology Club.<br><br>
+But when the <u>seedlings</u> arrived, Webb had an idea. Instead of planting the young trees in front of the school, he thought it would be better to put them behind the school, where the sun gets very hot in the afternoon.<br><br>
+"It gets so hot inside the building that the students start to sweat during their afternoon classes," said Webb. "Now the shade from our trees will bring <u>them</u> some relief."<br><br>
+"There was no argument from the teachers," he added. "When I proposed the idea, everyone said, 'Now why didn't I think of that!'"<br><br>
+The relief won't come until the trees grow taller, but the school will not have to wait long because it requested two species of trees that grow quickly.<br><br>
+"Time is key, and we wanted our trees to get big fast," said Webb. "We were given a wide choice, from shrubs to fruit trees. We requested eucalyptus and willow trees."<br><br>
+Webb said he is also looking forward to finally seeing some wildlife in the school yard at Marina Hills High School.<br><br>
+"If all you have is a grass lawn with no trees, you can't expect the local birds to come and visit," said Webb. "They have no place to make their nests. Now that will change, and we'll be able to see birds from our classroom windows."` },
+r6: { title: 'Passage: Bats and Birds', html: `Being able to land safely is a critically important skill for all flying animals. Whereas <u>terrestrial</u> animals face no particular challenge when they need to stop running or crawling, flying animals move at much higher speeds, and they must be careful about how they land. Hitting the ground, or even water, at full flight speed would be quite dangerous. Before touching down, they must decrease their speed in order to land safely. Both bats and birds have mastered the skill of landing, but these two types of flyers go about it quite differently.<br><br>
+In the past it was believed that, in terms of flying mechanics, there was little difference between bats and birds. This belief was based only on assumption, however, because for years nobody had actually studied in graphic detail how bats move their wings. In recent years, though, researchers have discovered a number of interesting facts about bat flight. Bats are built differently from birds, and their wings <u>incorporate</u> both their front and hind limbs. This makes coordinating their limbs more difficult for bats and, as a result, they are not very good at flying over longer distances. However, they are much better at maneuverability: a bat can quickly change its direction of flight or completely reverse <u>it</u>, something a bird cannot easily do.<br><br>
+Another interesting characteristic of bat flight is the way in which bats land—upside down! Unlike birds, which touch down on the ground or on tree branches, bats can be observed flying around and then suddenly hanging upside down from an object overhead. How do they do it? A group of researchers recently used video cameras to film bats landing on nets <u>suspended</u> from the ceiling of their laboratory and studied the recordings in slow motion. They painted spots on the bats' wings to see in detail what happens to the wings in flight and during touchdown. It turns out that the bats flew in a straight line up to the net and then quickly flipped over and attached themselves to it upside down. One downside to this landing routine is that the bats often <u>slam</u> into their landing spot with some force, which probably causes pain. However, not all bats hit their landing spots with the same speed and force; these will vary depending on the area where a bat species makes its home. For example, a cave bat, which regularly perches on a hard stone ceiling, is more careful about its landing preparation than a bat more accustomed to landing in leafy treetops.` }
+};
+
+// ================= CÂU HỎI =================
+const correctAnswers = {};
+const cnt = { L: 0, R: 0 };
+function mk(sec, list) {
+    return list.map(([t, o, a]) => {
+        cnt[sec]++;
+        const id = sec + cnt[sec];
+        correctAnswers[id] = a;
+        return { id, n: cnt[sec], t, o, a };
+    });
+}
+
+const questionGroups = [
+    { sec: 'L', passage: 'l1', sectionTitle: 'Questions 1-5 refer to the following note.', qs: mk('L', [
+        ['', ['So', 'While', 'Because', 'Although'], 'B'],
+        ['', ['take', 'to take', 'is taking', 'was taken'], 'C'],
+        ['', ['will be able not', 'not will be able', 'be able will not', 'will not be able'], 'D'],
+        ['', ["that student's place", "that student's place is", "of that student's place", "that student's place, which"], 'A'],
+        ['', ['asking', 'offering', 'deciding', 'discussing'], 'B']
+    ]) },
+    { sec: 'L', passage: 'l2', sectionTitle: 'Questions 6-9 refer to the following announcement.', qs: mk('L', [
+        ['', ['finds', 'finding', 'has found', 'was found'], 'D'],
+        ['', ['seemed', 'intended', 'discovered', 'influenced'], 'C'],
+        ['', ['a guest was', 'a guest being', 'he was a guest', 'who was a guest'], 'D'],
+        ['', ['a detailed description is given', 'to give a detailed description', 'giving a detailed description', 'a detailed description gave'], 'B']
+    ]) },
+    { sec: 'L', passage: 'l3', sectionTitle: 'Questions 10-13 refer to the following announcement.', qs: mk('L', [
+        ['', ['Because a student', 'Being a student', 'It was a student', 'A student'], 'D'],
+        ['', ['wide', 'difficult', 'physical', 'powerful'], 'B'],
+        ['', ['the winner.', 'is the winner.', 'being the winner.', 'will be the winner.'], 'A'],
+        ['', ['as fast', 'fastest', 'to be fast', 'faster than'], 'D']
+    ]) },
+    { sec: 'L', passage: 'l4', sectionTitle: 'Questions 14-17 refer to the following part of a short story.', qs: mk('L', [
+        ['', ['total.', 'funny.', 'foreign.', 'nervous.'], 'D'],
+        ['', ['finding the cat', 'the cat he had found', 'he had found the cat', 'the cat had been found'], 'B'],
+        ['', ['as', 'that', 'which', 'during'], 'A'],
+        ['', ['bring', 'brings', 'brought', 'bringing'], 'D']
+    ]) },
+    { sec: 'L', passage: 'l5', sectionTitle: 'Questions 18-25 refer to the following notice.', qs: mk('L', [
+        ['', ['Begins', 'Beginning', 'Is beginning', 'To have begun'], 'B'],
+        ['', ['making', 'be made', 'be making', 'been making'], 'C'],
+        ['', ['done,', 'made,', 'taken,', 'entered,'], 'A'],
+        ['', ['greatly', 'temporarily', 'successfully', 'thoughtfully'], 'B'],
+        ['', ['At', 'On', 'Over', 'During'], 'D'],
+        ['', ['As a result,', 'Even though,', 'All of a sudden,', 'On the other hand,'], 'A'],
+        ['', ['keeping out', 'to keep out', 'keeps out', 'kept out'], 'B'],
+        ['', ['is having a question', 'they have questions', 'there is a question', 'who has questions'], 'D']
+    ]) },
+    { sec: 'L', passage: 'l6', sectionTitle: 'Questions 26-33 refer to the following magazine article.', qs: mk('L', [
+        ['', ['no threat to', 'no threatening', 'not to threaten', 'a threat is not to'], 'A'],
+        ['', ['as large', 'is larger', 'many large', 'much larger'], 'D'],
+        ['', ['resists', 'insists', 'consists', 'persists'], 'C'],
+        ['', ['what', 'where', 'which', 'whose'], 'B'],
+        ['', ['a crowd', 'crowded', 'has crowded', 'it is crowded'], 'B'],
+        ['', ['Water flows', 'Flowing water', 'To flow water', 'Water flowing'], 'A'],
+        ['', ['does require not of eating', 'does not require of eating', 'of eating does not require', 'not of eating does require'], 'C'],
+        ['', ['Enough food is obtained,', 'To obtain enough food,', 'Enough food obtaining,', 'It obtains enough food,'], 'B']
+    ]) },
+    { sec: 'L', passage: 'l7', sectionTitle: 'Questions 34-42 refer to the following essay.', qs: mk('L', [
+        ['', ['by', 'for', 'after', 'over'], 'D'],
+        ['', ['considering what', 'they considered it', 'what is considered', 'that it is considered'], 'C'],
+        ['', ['no people to clap', 'people do not clap', 'clapping people do not', 'people are not clapping'], 'B'],
+        ['', ['imagines', 'imagined', 'to imagine', 'imagination'], 'C'],
+        ['', ['what people did.', 'that people do it.', 'people had done it.', 'what did people do.'], 'A'],
+        ['', ['cheerful', 'cheered', 'cheering', 'has cheered'], 'B'],
+        ['', ['why', 'how', 'what', 'which'], 'B'],
+        ['', ['differs', 'differed', 'to differ', 'different'], 'D'],
+        ['', ['more serious since', 'so serious than', 'as serious so', 'as serious as'], 'D']
+    ]) },
+
+    { sec: 'R', passage: 'r1', sectionTitle: 'Questions 1-5 are about the following note from a teacher.', qs: mk('R', [
+        ['In the note, the underlined word "this" (line 2) refers to _______.', ['saying thank you', 'finishing homework', 'going to the science laboratory', 'cleaning the science laboratory'], 'D'],
+        ['Where will Mr. Marston probably be when Cathy cleans the lab?', ['In the lab', 'In his office', 'At a meeting', 'In the classroom next door'], 'C'],
+        ['Where should Cathy put the glass containers?', ['On a towel', 'Near the door', 'Next to the sink', 'On the equipment shelf'], 'A'],
+        ['What should Cathy do immediately after sweeping the floor?', ['Lock the lab door', 'Put away any microscopes', 'Wipe down the worktables', 'Take the trash out of the lab'], 'D'],
+        ['When should Cathy give the key back to Mr. Marston?', ['On her way home', 'In class the next day', 'Right after she cleans the lab', 'Before school begins the next morning'], 'B']
+    ]) },
+    { sec: 'R', passage: 'r2', sectionTitle: 'Questions 6-10 refer to the following letter in a school newspaper.', qs: mk('R', [
+        ['Why is the author a student at Wilson Middle School?', ['Because his family recently moved', 'Because his father is a teacher there', 'Because it is the best school in the area', 'Because he just completed primary school'], 'A'],
+        ['In the letter, the underlined word "perspective" (line 4) is closest in meaning to _______.', ['cause and effect', 'back and forth', 'out of date', 'point of view'], 'D'],
+        ['In the letter, the underlined word "one" (line 9) refers to _______.', ['day', 'school', 'option', 'cafeteria'], 'C'],
+        ['Why does the author like the food at Wilson Middle School?', ['It tastes good.', 'It is very healthful.', 'The servings are large.', 'Students help to make it.'], 'A'],
+        ['What does the author imply about the students at his previous school compared to students at Wilson Middle School?', ['They did better in their studies.', 'They planned fewer activities.', 'They belonged to sports clubs.', 'They gave him more help.'], 'B']
+    ]) },
+    { sec: 'R', passage: 'r3', sectionTitle: 'Questions 11-17 are about the following story.', qs: mk('R', [
+        ['What title best summarizes the main idea of the passage?', ['Cricket: A Game for All Ages', 'How I Learned to Love Cricket', 'The Dangers of Playing Cricket', 'Learning the Rules of a Difficult Game'], 'B'],
+        ['In the story, the underlined word "detested" (line 1) is closest in meaning to _______.', ['hated', 'played', 'wanted', 'watched'], 'A'],
+        ['What best describes the author\'s attitude toward cricket when he was very young?', ['It was boring to watch.', 'It was difficult to learn.', 'It was fun to talk about.', 'It was dangerous to play.'], 'A'],
+        ['According to the author, what was surprising about some of the cricket games he played?', ['They were played without bats.', 'They were played on rooftops.', 'No one cared who won them.', 'No one got hurt playing them.'], 'B'],
+        ['The author describes memories of all of the following EXCEPT _______.', ['how the sun felt on his skin', 'how the ball sounded hitting the bat', 'how the sky turned from light to dark', 'how the rules of the game caused arguments'], 'D'],
+        ['What change does the author describe?', ['He could not remember the rules of cricket at first, but then he decided it did not matter.', 'He was afraid of getting hurt playing cricket at first, but then he stopped being afraid.', 'He did not like cricket at first, but then he began to enjoy it.', 'He liked playing cricket at first, but then he grew tired of it.'], 'C'],
+        ['In the story, the underlined word "fond" (line 13) is closest in meaning to _______.', ['old', 'cruel', 'happy', 'interesting'], 'C']
+    ]) },
+    { sec: 'R', passage: 'r4', sectionTitle: 'Questions 18-23 are about the following story.', qs: mk('R', [
+        ['Why did Edward go to the Millers\' house?', ['To borrow a flashlight', 'To take care of Lucas', 'To welcome the Millers to the neighborhood', 'To help the Millers move into their house'], 'B'],
+        ['In the story, the underlined word "entertain" (line 7) is closest in meaning to _______.', ['look for', 'cook for', 'play with', 'argue with'], 'C'],
+        ['What did Edward and Lucas do before Lucas went to bed?', ['They built a tower of blocks.', 'They looked for a flashlight.', 'They put books on a shelf.', 'They drew pictures.'], 'A'],
+        ['In the story, the underlined word "one" (line 26) refers to a _______.', ['shelf', 'chair', 'monster', 'flashlight'], 'C'],
+        ['How did Lucas probably feel about going to bed?', ['Disappointed and afraid', 'Angry and nervous', 'Relieved and tired', 'Sad and confused'], 'A'],
+        ['Why did Lucas keep calling out to Edward?', ['He saw something under the bed.', 'He did not want to be left alone.', 'He could not reach the book on the shelf.', 'He forgot where the wooden blocks were.'], 'B']
+    ]) },
+    { sec: 'R', passage: 'r5', sectionTitle: 'Questions 24-31 are about the following newspaper article.', qs: mk('R', [
+        ['What would be the most appropriate headline for this article?', ['Local School Gets Greener', 'Student Wins Science Award', 'Principal Discovers New Tree', 'Teacher Leads Ecological Club'], 'A'],
+        ['What problem does Principal Webb talk about?', ['Pollution in the city', 'Classrooms that are too hot', 'Tall trees that block the view', 'Wild animals that destroy trees'], 'B'],
+        ['What did the Ecology Club do for Marina Hills High School?', ['It helped design the school yard.', 'It put flowers in the classrooms.', 'It sold seeds to the school.', 'It provided free trees.'], 'D'],
+        ['In the article, the underlined word "seedlings" (line 13) is closest in meaning to _______.', ['bird nests', 'young trees', 'packages of seeds', 'members of a club'], 'B'],
+        ['What decision was changed?', ['Which trees should be dug up', 'When the old trees should be cut down', 'Where the new trees should be planted', 'Which type of tree should be chosen'], 'C'],
+        ['In the article, the underlined word "them" (line 22) refers to _______.', ['trees', 'classes', 'students', 'teachers'], 'C'],
+        ['What can be inferred from the article about eucalyptus and willow trees?', ['They grow quickly.', 'They become extremely tall.', 'They are less expensive than fruit trees.', 'They do not grow flowers in the springtime.'], 'A'],
+        ['What does Principal Webb imply about the local birds?', ['They make their nests on the ground.', 'They are not often seen at the school.', 'There are fewer of them due to the pollution problem.', 'They fly into the classrooms when the windows are open.'], 'B']
+    ]) },
+    { sec: 'R', passage: 'r6', sectionTitle: 'Questions 32-42 are about the following passage.', qs: mk('R', [
+        ['What is the main topic of the passage?', ['Places where flying animals choose to land', 'Why scientists have difficulty observing bats', 'Differences in the eating habits of bats and birds', 'Ways in which bats move differently from birds'], 'D'],
+        ['In the passage, the underlined word "terrestrial" (line 2) is closest in meaning to _______.', ['high-flying', 'fast-moving', 'tree-climbing', 'ground-living'], 'D'],
+        ['According to the passage, what skill is crucial for flying animals?', ['Diving underwater', 'Slowing down to land', 'Flying over great distances', 'Balancing on high branches'], 'B'],
+        ['Which of the following is a false assumption about bats that was recently corrected?', ['They cannot hear.', 'They sleep upside down.', 'They fly similarly to birds.', 'They hide in tree branches.'], 'C'],
+        ['According to the passage, what is an advantage that bats have over birds?', ['Bats can land on a greater variety of surfaces.', 'Bats can turn in the air more quickly.', 'Bats can eat while flying.', 'Bats are lighter.'], 'B'],
+        ['In the passage, the underlined word "incorporate" (line 11) is closest in meaning to _______.', ['add', 'deliver', 'include', 'discover'], 'C'],
+        ['In the passage, the underlined word "it" (line 14) refers to _______.', ['bat', 'bird', 'direction', 'maneuverability'], 'C'],
+        ['The researchers used all of the following to study bats EXCEPT _______.', ['nets', 'paint', 'cables', 'cameras'], 'C'],
+        ['In the passage, the underlined word "suspended" (line 20) is closest in meaning to _______.', ['hanging', 'entering', 'falling', 'living'], 'A'],
+        ['In the passage, the underlined word "slam" (line 24) is closest in meaning to _______.', ['crash', 'bring', 'break', 'change'], 'A'],
+        ['According to the passage, what helps determine a bat\'s landing speed?', ['What it eats', 'How old it is', 'How big it is', 'Where it lives'], 'D']
+    ]) }
+];
+
+const partBanners = {
+    L: { title: 'PART 2 - LANGUAGE FORM AND MEANING (42 câu)', text: 'Choose the word or words that correctly complete each sentence. / Chọn từ hoặc cụm từ điền đúng vào mỗi chỗ trống được đánh số trong bài.' },
+    R: { title: 'PART 3 - READING COMPREHENSION (42 câu)', text: 'Read the texts and choose the correct answer to each question. / Đọc các bài đọc và chọn đáp án đúng. Từ được gạch chân trong bài là từ được hỏi trong câu.' }
+};
+
+// ================= PHÂN LOẠI KỸ NĂNG =================
+const skillCategories = {
+    // Language Form and Meaning
+    verbForms: { name: 'Thì & dạng động từ', sec: 'L', questions: ['L2','L6','L9','L17','L19','L24','L36','L37','L39'] },
+    wordChoice: { name: 'Từ vựng - chọn từ (Word choice)', sec: 'L', questions: ['L5','L7','L11','L14','L20','L21','L28'] },
+    clauses: { name: 'Mệnh đề & cấu trúc câu', sec: 'L', questions: ['L3','L4','L8','L10','L12','L15','L25','L26','L30','L31','L32','L35','L38','L41'] },
+    connectors: { name: 'Liên từ, giới từ & liên kết câu', sec: 'L', questions: ['L1','L16','L18','L22','L23','L29','L33','L34','L40'] },
+    comparison: { name: 'So sánh (Comparison)', sec: 'L', questions: ['L13','L27','L42'] },
+    // Reading Comprehension
+    vocabContext: { name: 'Từ vựng theo ngữ cảnh', sec: 'R', questions: ['R7','R12','R17','R19','R27','R33','R37','R40','R41'] },
+    reference: { name: 'Từ thay thế (Reference)', sec: 'R', questions: ['R1','R8','R21','R29','R38'] },
+    mainIdea: { name: 'Ý chính (Main Idea)', sec: 'R', questions: ['R11','R24','R32'] },
+    details: { name: 'Chi tiết (Details)', sec: 'R', questions: ['R2','R3','R4','R5','R6','R9','R14','R15','R18','R20','R23','R25','R26','R28','R34','R36','R39','R42'] },
+    inference: { name: 'Suy luận (Inference)', sec: 'R', questions: ['R10','R13','R16','R22','R30','R31','R35'] }
+};
+
+const skillAdvice = {
+    verbForms: 'Ôn các thì cơ bản, câu bị động, dạng V-ing/to V sau động từ & giới từ (VD: thank you for + V-ing, remember to + V).',
+    wordChoice: 'Học từ vựng theo cụm/collocation (consist of, discover, temporarily...) và luyện chọn từ theo ngữ cảnh cả câu.',
+    clauses: 'Ôn mệnh đề quan hệ (who/which/where), mệnh đề rút gọn, trật tự từ trong câu và cấu trúc câu phủ định.',
+    connectors: 'Ôn liên từ (while, although, because, as a result), giới từ chỉ thời gian (during, over) và cách các câu liên kết với nhau.',
+    comparison: 'Ôn so sánh hơn, so sánh bằng (as ... as), much/far + so sánh hơn.',
+    vocabContext: 'Luyện đoán nghĩa từ mới qua ngữ cảnh: đọc cả câu trước/sau từ gạch chân; học thêm từ vựng học thuật cơ bản.',
+    reference: 'Luyện tìm từ được thay thế (it, them, one, this): quay lại câu trước đó và thay thử từng đáp án vào vị trí đại từ.',
+    mainIdea: 'Đọc câu đầu/câu cuối mỗi đoạn, luyện tóm tắt cả bài bằng một câu hoặc đặt tiêu đề cho bài đọc.',
+    details: 'Luyện scanning: gạch chân từ khóa trong câu hỏi, tìm đúng vị trí trong bài; chú ý các câu dạng NOT/EXCEPT.',
+    inference: 'Luyện "đọc giữa các dòng": hỏi "tác giả/nhân vật ngụ ý gì?" khi thông tin không được nói trực tiếp.'
+};
+
+// Mô tả năng lực theo bảng điểm TOEFL Junior Standard
+const readingDescriptors = {
+    'B2': 'Hiểu ý chính của văn bản học thuật và phi học thuật kể cả khi không nêu rõ; nắm chính xác chi tiết quan trọng; suy luận tốt (kể cả mục đích tác giả đưa thông tin); hiểu từ vựng mới qua ngữ cảnh ngay cả trong văn bản phức tạp.',
+    'B1': 'Hiểu ý chính được nêu rõ; thường xác định được chi tiết quan trọng; đôi khi suy luận chính xác; thường nắm được sự kiện và cốt truyện; thường đoán được nghĩa từ mới trong văn bản đơn giản.',
+    'A2': 'Đôi khi xác định được ý chính nêu rõ và chi tiết cơ bản khi ngôn ngữ đơn giản; thường tìm được thông tin trong lịch, thực đơn; đôi khi suy luận đơn giản và đoán nghĩa từ mới trong văn bản đơn giản.',
+    'Dưới A2': 'Cần phát triển: xác định ý chính và chi tiết trong văn bản đơn giản; suy luận; tìm thông tin cơ bản trong lịch/thực đơn; đoán nghĩa từ mới qua ngữ cảnh.'
+};
+const languageDescriptors = {
+    'B2': 'Thường nhận biết đúng nghĩa và cách dùng cấu trúc ngữ pháp nâng cao (VD: mệnh đề quan hệ); có vốn từ rộng gồm từ học thuật; nhận biết cách các câu liên kết thành đoạn văn mạch lạc.',
+    'B1': 'Thường dùng đúng các cấu trúc ngữ pháp cơ bản (VD: so sánh hơn) nhưng chưa ổn định với cấu trúc nâng cao; nắm từ vựng thông dụng hằng ngày; nhận biết liên kết câu trong văn bản đời thường, đôi khi khó với văn bản học thuật.',
+    'A2': 'Đôi khi nhận biết đúng các cấu trúc cơ bản nhất (VD: thì hiện tại/quá khứ đơn); biết từ vựng phổ biến nhất; đôi khi nhận biết liên kết câu trong văn bản đời thường, thường gặp khó với văn bản học thuật.',
+    'Dưới A2': 'Cần phát triển: vốn từ vựng chung; ngữ pháp cơ bản (hòa hợp chủ-vị, giới từ đơn giản); hiểu cách các câu liên kết thành đoạn văn mạch lạc.'
+};
+
+// ================= TRẠNG THÁI =================
+let studentInfo = {};
+let answers = {};
+let timeLeft = TEST_SECONDS;
+let timerInterval;
+let startTime;
+
+function startTest() {
+    const name = document.getElementById('studentName').value.trim();
+    const classVal = document.getElementById('studentClass').value.trim();
+    const phone = document.getElementById('parentPhone').value.trim();
+
+    if (!name || !classVal || !phone) {
+        alert('Vui lòng điền đầy đủ thông tin!');
+        return;
+    }
+
+    studentInfo = { name, class: classVal, parentPhone: phone };
+
+    document.getElementById('infoScreen').classList.add('hidden');
+    document.getElementById('testScreen').classList.remove('hidden');
+    document.getElementById('headerName').textContent = name;
+    document.getElementById('headerClass').textContent = classVal;
+
+    renderQuestions();
+    startTimer();
+    startTime = new Date();
+}
+
+function renderPassage(key) {
+    const p = P[key];
+    const body = p.html.replace(/\{\{(\d+)\}\}/g, '<span class="blank">[$1]</span>');
+    return `
+    <div class="reading-passage">
+        <div class="passage-title">${p.title}</div>
+        <div class="text-gray-800">${body}</div>
+    </div>`;
+}
+
+function renderQuestions() {
+    const container = document.getElementById('questionsContainer');
+    let html = '';
+    let lastSec = '';
+
+    questionGroups.forEach(group => {
+        if (group.sec !== lastSec) {
+            lastSec = group.sec;
+            html += `<div class="part-banner"><div class="text-2xl font-bold">${partBanners[group.sec].title}</div><div class="mt-1 text-green-50">${partBanners[group.sec].text}</div></div>`;
+        }
+        if (group.sectionTitle) {
+            html += `<h3 class="text-2xl font-bold text-green-700 mb-4 mt-6 border-b-2 border-green-300 pb-2">${group.sectionTitle}</h3>`;
+        }
+        if (group.passage) html += renderPassage(group.passage);
+
+        group.qs.forEach(q => {
+            const text = q.t || `Chọn đáp án đúng cho chỗ trống <span class="blank">[${q.n}]</span>`;
+            html += `
+            <div class="border-b-2 border-green-100 pb-6 mb-6 last:border-b-0">
+                <div class="flex gap-4">
+                    <div class="flex-shrink-0">
+                        <div class="w-10 h-10 bg-green-600 text-white rounded-full flex items-center justify-center font-bold">${q.n}</div>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-gray-800 mb-4 text-lg leading-relaxed">${text}</p>
+                        <div class="space-y-2">`;
+            q.o.forEach((value, i) => {
+                const key = 'ABCD'[i];
+                html += `
+                    <label class="flex items-start gap-3 p-4 rounded-lg cursor-pointer transition-all bg-gray-50 border-2 border-gray-200 hover:bg-gray-100 answer-option" data-question="${q.id}" data-answer="${key}">
+                        <input type="radio" name="q${q.id}" value="${key}" onchange="handleAnswer('${q.id}', '${key}')"
+                            class="mt-1 w-5 h-5 text-green-600">
+                        <span class="flex-1 text-gray-700">
+                            <span class="font-semibold text-green-700">${key}.</span> ${value}
+                        </span>
+                    </label>`;
+            });
+            html += `
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+        });
+    });
+
+    container.innerHTML = html;
+}
+
+function handleAnswer(id, answer) {
+    answers[id] = answer;
+    updateProgress();
+
+    document.querySelectorAll(`label[data-question="${id}"]`).forEach(label => {
+        if (label.dataset.answer === answer) {
+            label.classList.remove('bg-gray-50', 'border-gray-200');
+            label.classList.add('bg-green-100', 'border-green-500');
+        } else {
+            label.classList.remove('bg-green-100', 'border-green-500');
+            label.classList.add('bg-gray-50', 'border-gray-200');
+        }
+    });
+}
+
+function updateProgress() {
+    const answered = Object.keys(answers).length;
+    const percent = Math.round((answered / TOTAL_Q) * 100);
+
+    document.getElementById('progress').textContent = answered;
+    document.getElementById('progressPercent').textContent = percent + '%';
+    document.getElementById('progressBar').style.width = percent + '%';
+
+    const unanswered = TOTAL_Q - answered;
+    if (unanswered > 0) {
+        document.getElementById('warningBox').classList.remove('hidden');
+        document.getElementById('unansweredCount').textContent = unanswered;
+    } else {
+        document.getElementById('warningBox').classList.add('hidden');
+    }
+}
+
+function startTimer() {
+    timerInterval = setInterval(() => {
+        timeLeft--;
+
+        const minutes = Math.floor(timeLeft / 60);
+        const seconds = timeLeft % 60;
+        document.getElementById('timer').textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+
+        if (timeLeft < 300) {
+            const clockIcon = document.getElementById('clockIcon');
+            const timerSpan = document.getElementById('timer');
+            clockIcon.classList.add('text-red-600');
+            clockIcon.classList.remove('text-green-600');
+            timerSpan.classList.add('text-red-600');
+            timerSpan.classList.remove('text-green-600');
+        }
+
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            submitTest();
+        }
+    }, 1000);
+}
+
+// ========== CHẤM ĐIỂM & PHÂN TÍCH ==========
+
+// Quy đổi điểm thô -> thang điểm TOEFL Junior (200-300) - ước lượng tuyến tính
+function toScaled(raw, total) {
+    return 200 + Math.round((raw / total) * 100);
+}
+
+// Quy đổi điểm thang -> CEFR theo bảng TOEFL Junior Standard
+// Reading: <210 Dưới A2 | 210-240 A2 | 245-285 B1 | 290-300 B2
+function readingCEFR(s) {
+    if (s < 210) return 'Dưới A2';
+    if (s < 245) return 'A2';
+    if (s < 290) return 'B1';
+    return 'B2';
+}
+// Language Form and Meaning: <210 Dưới A2 | 210-245 A2 | 250-275 B1 | 280-300 B2
+function languageCEFR(s) {
+    if (s < 210) return 'Dưới A2';
+    if (s < 250) return 'A2';
+    if (s < 280) return 'B1';
+    return 'B2';
+}
+
+const cefrOrder = ['Dưới A2', 'A2', 'B1', 'B2'];
+function lowerCEFR(a, b) {
+    return cefrOrder[Math.min(cefrOrder.indexOf(a), cefrOrder.indexOf(b))];
+}
+
+function calculateSkillScores() {
+    const scores = {};
+    for (const [skill, data] of Object.entries(skillCategories)) {
+        let correct = 0;
+        data.questions.forEach(id => { if (answers[id] === correctAnswers[id]) correct++; });
+        scores[skill] = {
+            correct,
+            total: data.questions.length,
+            percentage: Math.round((correct / data.questions.length) * 100)
+        };
+    }
+    return scores;
+}
+
+function generateStrengths(skillScores) {
+    const list = [];
+    for (const [skill, d] of Object.entries(skillScores)) {
+        if (d.percentage >= 75) list.push(`${skillCategories[skill].name} (${d.percentage}%)`);
+    }
+    return list.length ? list.join(', ') : 'Cần cố gắng thêm để phát triển điểm mạnh';
+}
+
+function generateWeaknesses(skillScores) {
+    const list = [];
+    for (const [skill, d] of Object.entries(skillScores)) {
+        if (d.percentage < 60) list.push(`${skillCategories[skill].name} (${d.percentage}%)`);
+    }
+    return list.length ? list.join(' | ') : 'Không có điểm yếu đáng kể';
+}
+
+function generateRecommendations(skillScores, readingCefr, languageCefr) {
+    let rec = '';
+    for (const [skill, d] of Object.entries(skillScores)) {
+        if (d.percentage < 60) rec += `• ${skillCategories[skill].name}: ${skillAdvice[skill]}\n`;
+    }
+    if (!rec) rec = '• Các kỹ năng đều ổn định, tiếp tục luyện đề TOEFL Junior để duy trì và nâng cao.\n';
+
+    const nextTarget = { 'Dưới A2': 'A2', 'A2': 'B1', 'B1': 'B2', 'B2': 'B2' };
+    rec += `\n🎯 MỤC TIÊU: Reading nâng từ ${readingCefr} lên ${nextTarget[readingCefr]}; Language Form & Meaning nâng từ ${languageCefr} lên ${nextTarget[languageCefr]}.`;
+    return rec.trim();
+}
+
+async function submitTest() {
+    clearInterval(timerInterval);
+
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = `
+        <div class="spinner"></div>
+        <span>Đang phân tích và nộp bài...</span>
+    `;
+
+    // Điểm thô từng phần
+    let langCorrect = 0, readCorrect = 0;
+    const wrongList = [];
+    Object.keys(correctAnswers).forEach(id => {
+        const ok = answers[id] === correctAnswers[id];
+        if (ok) { id[0] === 'L' ? langCorrect++ : readCorrect++; }
+        else if (answers[id]) wrongList.push(id);
+    });
+    const wrongQuestionsText = wrongList.length ? wrongList.join(', ') : 'Không có';
+    const unanswered = TOTAL_Q - Object.keys(answers).length;
+
+    const langScaled = toScaled(langCorrect, 42);
+    const readScaled = toScaled(readCorrect, 42);
+    const langCefr = languageCEFR(langScaled);
+    const readCefr = readingCEFR(readScaled);
+    const overallCefr = lowerCEFR(langCefr, readCefr);
+
+    const endTime = new Date();
+    const timeUsed = Math.round((endTime - startTime) / 60000);
+
+    const skillScores = calculateSkillScores();
+    const overallAssessment = `Language Form & Meaning: ${langCorrect}/42 (~${langScaled}/300, ${langCefr}). Reading: ${readCorrect}/42 (~${readScaled}/300, ${readCefr}). Trình độ tổng quát (theo phần thấp hơn): ${overallCefr}. (Điểm thang là ước lượng từ điểm thô.)`;
+    const strengths = generateStrengths(skillScores);
+    const weaknesses = generateWeaknesses(skillScores);
+    const recommendations = generateRecommendations(skillScores, readCefr, langCefr);
+
+    const dataToSend = {
+        timestamp: new Date().toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' }),
+        name: studentInfo.name,
+        class: studentInfo.class,
+        parentPhone: studentInfo.parentPhone,
+        languageRaw: langCorrect,
+        languageScaled: langScaled,
+        languageCefr: langCefr,
+        readingRaw: readCorrect,
+        readingScaled: readScaled,
+        readingCefr: readCefr,
+        totalCorrect: langCorrect + readCorrect,
+        totalQuestions: TOTAL_Q,
+        unanswered: unanswered,
+        timeUsed: timeUsed + ' phút',
+        overallCefr: overallCefr,
+        skillScores: Object.fromEntries(Object.entries(skillScores).map(([k, v]) => [k, v.percentage])),
+        verbFormsScore: skillScores.verbForms.percentage,
+        wordChoiceScore: skillScores.wordChoice.percentage,
+        clausesScore: skillScores.clauses.percentage,
+        connectorsScore: skillScores.connectors.percentage,
+        comparisonScore: skillScores.comparison.percentage,
+        vocabContextScore: skillScores.vocabContext.percentage,
+        referenceScore: skillScores.reference.percentage,
+        mainIdeaScore: skillScores.mainIdea.percentage,
+        detailsScore: skillScores.details.percentage,
+        inferenceScore: skillScores.inference.percentage,
+        overallAssessment: overallAssessment,
+        languageAnalysis: languageDescriptors[langCefr],
+        readingAnalysis: readingDescriptors[readCefr],
+        strengthsDetail: strengths,
+        weaknessesDetail: weaknesses,
+        recommendationsDetail: recommendations,
+        wrongQuestions: wrongQuestionsText,
+        answers: JSON.stringify(answers)
+    };
+
+    try {
+        await fetch(GOOGLE_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(dataToSend)
+        });
+        console.log('Đã gửi kết quả chi tiết lên Google Sheets');
+    } catch (error) {
+        console.error('Lỗi khi gửi dữ liệu:', error);
+    }
+
+    document.getElementById('testScreen').classList.add('hidden');
+    document.getElementById('resultScreen').classList.remove('hidden');
+    document.getElementById('resultName').textContent = studentInfo.name;
+    document.getElementById('resultTime').textContent = timeUsed + ' phút';
+    document.getElementById('resultPhone').textContent = studentInfo.parentPhone;
+    window.scrollTo(0, 0);
+}
+</script>
+
+</body>
+</html>
