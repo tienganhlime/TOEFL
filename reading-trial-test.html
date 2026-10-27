@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TOEFL Primary Test - Trung Tâm Tiếng Anh LIME</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 50%, #A5D6A7 100%);
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #16a34a;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .reading-passage {
+            background: #F1F8E9;
+            border-left: 4px solid #66BB6A;
+            padding: 20px;
+            margin-bottom: 24px;
+            border-radius: 8px;
+            line-height: 1.8;
+        }
+        .passage-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #2E7D32;
+            margin-bottom: 16px;
+            border-bottom: 2px solid #66BB6A;
+            padding-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Màn hình nhập thông tin -->
+<div id="infoScreen" class="min-h-screen p-4 fade-in">
+    <div class="max-w-2xl mx-auto">
+        <div class="bg-white rounded-2xl shadow-2xl p-8 mt-8">
+            <div class="text-center mb-8">
+                <img src="https://gofirst.pro/images/uploads/62/baseimg/logo_16541442053.png" 
+                     alt="LIME Logo" 
+                     class="w-32 h-32 mx-auto mb-4 object-contain">
+                <h1 class="text-4xl font-bold text-green-700 mb-2">Trung Tâm Tiếng Anh LIME</h1>
+                <p class="text-green-600 text-lg">Hotline: 0976222792</p>
+                <div class="mt-4 h-1 w-32 bg-green-500 mx-auto rounded"></div>
+            </div>
+            
+            <div class="bg-green-50 rounded-xl p-6 mb-6">
+                <h2 class="text-2xl font-bold text-green-800 mb-4">TOEFL PRIMARY STEP 2 - TEST 1</h2>
+                <div class="space-y-2 text-green-700">
+                    <p>📝 Số câu hỏi: 36 câu</p>
+                    <p>⏰ Thời gian: 30 phút</p>
+                    <p>✅ Làm bài trực tuyến, chấm điểm tự động</p>
+                    <p>📊 Phân tích chi tiết năng lực học sinh</p>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-green-800 font-semibold mb-2">Họ và tên học sinh *</label>
+                    <input type="text" id="studentName" 
+                        class="w-full px-4 py-3 border-2 border-green-300 rounded-lg focus:border-green-500 focus:outline-none"
+                        placeholder="Nhập họ tên">
+                </div>
+                
+                <div>
+                    <label class="block text-green-800 font-semibold mb-2">Lớp *</label>
+                    <input type="text" id="studentClass" 
+                        class="w-full px-4 py-3 border-2 border-green-300 rounded-lg focus:border-green-500 focus:outline-none"
+                        placeholder="Nhập lớp">
+                </div>
+                
+                <div>
+                    <label class="block text-green-800 font-semibold mb-2">Số điện thoại phụ huynh *</label>
+                    <input type="tel" id="parentPhone" 
+                        class="w-full px-4 py-3 border-2 border-green-300 rounded-lg focus:border-green-500 focus:outline-none"
+                        placeholder="Nhập số điện thoại">
+                </div>
+            </div>
+
+            <button onclick="startTest()" 
+                class="w-full mt-6 bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-6 rounded-lg transition duration-300 text-lg shadow-lg">
+                BẮT ĐẦU LÀM BÀI
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Màn hình làm bài -->
+<div id="testScreen" class="hidden min-h-screen p-4">
+    <div class="max-w-5xl mx-auto">
+        <!-- Header sticky -->
+        <div class="bg-white rounded-2xl shadow-2xl p-6 mb-6 sticky top-4 z-10">
+            <div class="flex justify-between items-center flex-wrap gap-4">
+                <div class="flex items-center gap-3">
+                    <img src="https://gofirst.pro/images/uploads/62/baseimg/logo_16541442053.png" 
+                         alt="LIME Logo" 
+                         class="w-12 h-12 object-contain">                
+                    <div>
+                        <h1 class="text-2xl font-bold text-green-700">Trung Tâm Tiếng Anh LIME</h1>
+                        <p class="text-green-600 text-sm">Hotline: 0976222792</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-6">
+                    <div class="text-right">
+                        <p class="text-sm text-gray-600">Học sinh: <span id="headerName"></span></p>
+                        <p class="text-sm text-gray-600">Lớp: <span id="headerClass"></span></p>
+                    </div>
+                    
+                    <div class="flex items-center gap-2 bg-green-100 px-4 py-2 rounded-lg">
+                        <svg class="w-6 h-6" id="clockIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <span id="timer" class="text-2xl font-bold text-green-600">30:00</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-4">
+                <div class="flex justify-between text-sm text-gray-600 mb-1">
+                    <span>Tiến độ: <span id="progress">0</span>/36 câu</span>
+                    <span id="progressPercent">0%</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-3">
+                    <div id="progressBar" class="bg-green-600 h-3 rounded-full transition-all duration-300" style="width: 0%"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Nội dung bài test -->
+        <div class="bg-white rounded-2xl shadow-2xl p-8">
+            <h2 class="text-3xl font-bold text-green-800 mb-6 text-center">TOEFL PRIMARY STEP 2 - READING TEST 1</h2>
+            
+            <div id="questionsContainer" class="space-y-8">
+                <!-- Questions will be inserted here by JavaScript -->
+            </div>
+
+            <div class="mt-8 pt-6 border-t-2 border-green-200">
+                <button onclick="submitTest()" id="submitBtn"
+                    class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-6 rounded-lg transition duration-300 text-xl shadow-lg flex items-center justify-center gap-2">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    NỘP BÀI
+                </button>
+                
+                <div id="warningBox" class="hidden mt-4 p-4 bg-yellow-50 border-2 border-yellow-300 rounded-lg flex items-start gap-2">
+                    <svg class="w-5 h-5 text-yellow-600 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                    </svg>
+                    <p class="text-yellow-800 text-sm">
+                        Bạn còn <span id="unansweredCount">36</span> câu chưa trả lời. Hãy kiểm tra lại trước khi nộp bài!
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Màn hình kết quả -->
+<div id="resultScreen" class="hidden min-h-screen p-4">
+    <div class="max-w-3xl mx-auto">
+        <div class="bg-white rounded-2xl shadow-2xl p-8 mt-8 fade-in">
+            <div class="text-center mb-6">
+                <img src="https://gofirst.pro/images/uploads/62/baseimg/logo_16541442053.png" 
+                     alt="LIME Logo" 
+                     class="w-32 h-32 mx-auto mb-4 object-contain">
+                <h1 class="text-3xl font-bold text-green-700 mb-2">Trung Tâm Tiếng Anh LIME</h1>
+                <p class="text-green-600">Hotline: 0976222792</p>
+            </div>
+
+            <div class="text-center mb-8">
+                <svg class="w-24 h-24 text-green-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <h2 class="text-3xl font-bold text-green-800 mb-4">Nộp bài thành công!</h2>
+                <p class="text-xl text-gray-700 mb-2">Cảm ơn em <span id="resultName" class="font-bold text-green-700"></span> đã hoàn thành bài test!</p>
+            </div>
+
+            <div class="bg-green-50 rounded-xl p-6 mb-6 border-2 border-green-200">
+                <div class="text-center space-y-3">
+                    <p class="text-lg text-gray-700">📝 Bài làm của em đã được gửi về giáo viên</p>
+                    <p class="text-lg text-gray-700">⏰ Thời gian làm bài: <span id="resultTime" class="font-bold text-green-700"></span></p>
+                    <p class="text-lg text-gray-700">📊 Giáo viên sẽ phân tích chi tiết và liên hệ phụ huynh</p>
+                </div>
+            </div>
+
+            <div class="bg-blue-50 border-2 border-blue-200 rounded-xl p-6 mb-6">
+                <div class="flex items-start gap-3">
+                    <svg class="w-6 h-6 text-blue-600 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <div>
+                        <h3 class="font-bold text-blue-800 mb-2">📞 Lưu ý quan trọng:</h3>
+                        <p class="text-blue-700">
+                            Giáo viên sẽ liên hệ phụ huynh qua số <span id="resultPhone" class="font-bold"></span> để thông báo kết quả chi tiết. 
+                            Vui lòng chú ý điện thoại nhé!
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="location.reload()" 
+                class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-6 rounded-lg transition duration-300 text-lg shadow-lg">
+                Về trang chủ
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+// *** QUAN TRỌNG: Dán URL Google Apps Script của bạn vào đây ***
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwMS6xcE_bm2vaWBcYJvz4lZPuLt9QY1_cwbVS727Z7RTOOYAOxvY5N7Xvkerqdj_bzZw/exec';
+
+// ĐÁP ÁN ĐÚNG
+const correctAnswers = {
+    2: 'C', 3: 'B', 4: 'B', 5: 'A', 6: 'B', 7: 'C',
+    8: 'B', 9: 'C', 10: 'B', 11: 'C',
+    12: 'B', 13: 'A',
+    14: 'B', 15: 'A', 16: 'C',
+    17: 'B', 18: 'C',
+    19: 'B', 20: 'B', 21: 'B', 22: 'B',
+    23: 'B', 24: 'C', 25: 'A', 26: 'B',
+    27: 'B', 28: 'C', 29: 'B', 30: 'C',
+    31: 'B', 32: 'B', 33: 'C', 34: 'B',
+    35: 'B', 36: 'B', 37: 'B'
+};
+
+// PHÂN LOẠI CHI TIẾT CÁC KỸ NĂNG
+const skillCategories = {
+    vocabulary: {
+        questions: [2, 3, 4, 5, 6, 7],
+        name: 'Từ vựng (Vocabulary)',
+        level: 'A2-B1'
+    },
+    mainIdea: {
+        questions: [10, 11, 30, 34, 37],
+        name: 'Ý chính (Main Idea)',
+        level: 'A2-B1'
+    },
+    details: {
+        questions: [8, 9, 12, 13, 14, 16, 23, 25, 27, 28, 31, 32],
+        name: 'Chi tiết (Details)',
+        level: 'A2'
+    },
+    inference: {
+        questions: [15, 22, 26, 29, 33, 35, 36],
+        name: 'Suy luận (Inference)',
+        level: 'B1'
+    },
+    sequence: {
+        questions: [19, 20, 21, 24],
+        name: 'Trình tự (Sequence)',
+        level: 'A2'
+    },
+    purpose: {
+        questions: [17, 18],
+        name: 'Mục đích (Purpose)',
+        level: 'A2-B1'
+    }
+};
+
+// PHÂN TÍCH CHỦ ĐỀ TỪ VỰNG
+const vocabularyTopics = {
+    emotions: [2],
+    change: [3],
+    competition: [4],
+    quality: [5],
+    problem_solving: [6],
+    behavior: [7]
+};
+
+// BÀI ĐỌC
+const readingPassages = {
+    'bookfair': {
+        title: 'LINCOLN ELEMENTARY SCHOOL - SPRING BOOK FAIR',
+        content: `<strong>When:</strong> Monday, April 22 - Friday, April 26<br>
+<strong>Time:</strong> 8:00 AM - 4:00 PM (during school hours)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;6:00 PM - 8:00 PM (Thursday evening only)<br><br>
+<strong>Where:</strong> School Cafeteria<br><br>
+<strong>What we have:</strong><br>
+• Fiction and non-fiction books for all ages<br>
+• Educational posters and maps<br>
+• Book accessories (bookmarks, book lights, reading pillows)<br>
+• Special author visit on Wednesday at 2:00 PM<br><br>
+<strong>Prices:</strong> Most books are $5-$15<br>
+Posters and maps are $3-$8<br><br>
+<strong>Payment:</strong> Cash or check only (no credit cards)<br><br>
+<strong>NOTE:</strong> All money earned will be used to buy new books for the school library!<br><br>
+For questions, contact Ms. Peterson at 555-0142`
+    },
+    'soccer': {
+        title: 'Email: Soccer Practice Change',
+        content: `<strong>To:</strong> marcus.johnson@email.com<br>
+<strong>From:</strong> coach.stevens@lincolnschool.edu<br>
+<strong>Subject:</strong> Soccer Practice Change<br><br>
+Hi Marcus,<br><br>
+I hope you had a good weekend. I'm writing to let you know about an important change for this week's soccer practice.<br><br>
+Because of the heavy rain we've been having, the grass field is too wet and muddy to use safely. Instead of practicing outside on Tuesday and Thursday, we will practice in the school gym on those days.<br><br>
+Please remember to bring your indoor shoes. Regular soccer cleats are not allowed in the gym because they can damage the floor.<br><br>
+Practice times remain the same: 3:30 PM - 5:00 PM<br><br>
+See you on Tuesday!<br>
+Coach Stevens`
+    },
+    'recycling': {
+        title: 'Email: New Recycling Program',
+        content: `<strong>To:</strong> all.students@oakwood.edu<br>
+<strong>From:</strong> principal.martinez@oakwood.edu<br>
+<strong>Subject:</strong> New Recycling Program<br><br>
+Dear Students,<br><br>
+I am excited to announce that starting next Monday, our school will begin a new recycling program!<br><br>
+We have placed three different colored bins in each hallway:<br>
+- <strong>BLUE bins:</strong> paper and cardboard only<br>
+- <strong>GREEN bins:</strong> plastic bottles and containers<br>
+- <strong>YELLOW bins:</strong> aluminum cans<br><br>
+Please take a moment to think before you throw something away. Ask yourself: "Can this be recycled?"<br><br>
+If yes, put it in the correct colored bin. If you're not sure, ask a teacher for help.<br><br>
+Our goal is to reduce the amount of trash our school produces by 40% this year. Every student's participation is important to make this program successful.<br><br>
+Thank you for helping to protect our environment!<br>
+Principal Martinez`
+    },
+    'summerreading': {
+        title: 'CITY PUBLIC LIBRARY - SUMMER READING PROGRAM',
+        content: `<strong>Who can join:</strong> Students in grades 1-6<br>
+<strong>When:</strong> June 15 - August 15<br>
+<strong>Cost:</strong> FREE!<br><br>
+<strong>How it works:</strong><br>
+1. Sign up at the library front desk<br>
+2. Choose books to read from our summer list<br>
+3. Read at least 10 books during the summer<br>
+4. For each book, write a short review (3-5 sentences)<br>
+5. Submit your reviews by August 20<br><br>
+<strong>Prizes:</strong><br>
+- Students who complete 10 books: Certificate and bookmark<br>
+- Students who complete 20 books: Certificate and $10 gift card<br>
+- Students who complete 30+ books: Certificate, gift card, and your name on our "Super Readers" wall!<br><br>
+<strong>Special events every Friday at 10:00 AM:</strong><br>
+Author readings, book discussions, and craft activities<br><br>
+Questions? Call the Children's Department at 555-0199`
+    },
+    'paperairplane': {
+        title: 'How to Make a Paper Airplane That Flies Far',
+        content: `Have you ever wondered how to make a paper airplane that really flies well? Follow these simple steps to create one of the best paper airplane designs!<br><br>
+<strong>What you need:</strong><br>
+• One sheet of regular paper (8.5 x 11 inches)<br>
+• A flat surface to work on<br><br>
+<strong>Steps:</strong><br>
+1. Place the paper on a table with the long edge facing you. Fold the paper in half lengthwise (hot dog style), then unfold it. You should see a crease down the middle of the paper.<br><br>
+2. Take the top two corners and fold them down to meet at the center crease. Your paper should now look like a triangle on top.<br><br>
+3. Fold the paper in half along the center crease you made in step 1. The triangular part should be on the outside.<br><br>
+4. This is the tricky part! Fold down each wing. Start at the nose (the pointed end) and make a fold that is about one inch from the bottom edge. Make sure both wings are folded exactly the same way.<br><br>
+5. Open the wings slightly so they point up a bit. The bottom of the airplane should look like the letter "Y" from the front.<br><br>
+<strong>Tips for flying:</strong><br>
+• Hold the airplane at the bottom, right below where the wings meet<br>
+• Throw it gently forward, not up<br>
+• If it dives down, fold the back edges of the wings up slightly<br>
+• If it flies up and falls, fold the back edges down slightly`
+    },
+    'goldfish': {
+        title: 'How to Take Care of a Pet Goldfish',
+        content: `Many people think goldfish are easy pets, but they need proper care to stay healthy and live a long time. Here's what you need to know.<br><br>
+<strong>Setting Up the Tank:</strong><br>
+Goldfish need more space than most people think. A single goldfish requires at least a 10-gallon tank. If you want to have two goldfish, you'll need a 20-gallon tank. Bigger is always better!<br><br>
+Fill the tank with water and let it sit for 24 hours before adding your fish. This allows the water temperature to stabilize and helps remove chemicals from the water. You should also add an air pump to keep oxygen in the water, and a filter to keep the water clean.<br><br>
+<strong>Feeding Your Goldfish:</strong><br>
+Feed your goldfish once or twice a day, but only give them as much food as they can eat in about two minutes. If you give them too much food, they may get sick, and the extra food will make the water dirty. Goldfish food comes in flakes or small pellets. You can buy it at any pet store.<br><br>
+<strong>Keeping the Water Clean:</strong><br>
+Every week, you should remove about 25% of the water from the tank and replace it with fresh water. This keeps the water clean and healthy for your fish. Never change all the water at once, because this can shock your fish and make them sick. Also, don't use soap to clean the tank or decorations—water alone is enough!<br><br>
+If you follow these rules, your goldfish can live for 10 years or even longer!`
+    },
+    'emma': {
+        title: "Emma & Tyler's New Project",
+        content: `Emma and her brother Tyler loved building things together. One rainy afternoon, they decided to make a birdhouse for the backyard.<br><br>
+First, they drew a simple plan on paper. Emma measured the wood pieces while Tyler held them steady. Their dad helped saw the wood safely. Then, the two children hammered the pieces together and painted the house bright blue.<br><br>
+After they finished, Emma said, "Let's hang it near the big tree!" The next morning, they used a ladder to tie the birdhouse on a strong branch. Within a few days, small birds began flying around it.<br><br>
+One morning, they saw a little bird carrying twigs inside. "It's making a nest!" Tyler whispered. They felt proud and excited that their project had become a real home for a bird family.<br><br>
+From then on, they took turns checking the birdhouse and refilling the water dish nearby. The project taught them how working together could make something meaningful—not just for them, but for nature too.`
+    },
+    'daniel': {
+        title: "Daniel's Farm Visit",
+        content: `Daniel had always lived in the city, surrounded by tall buildings and busy streets. One summer, his cousin Mia invited him to spend a week on her family's farm. Daniel was excited but also nervous—he had never been near farm animals before.<br><br>
+On the first morning, Mia showed him how to collect eggs from the chicken coop. The chickens clucked loudly, and Daniel hesitated at first. But after watching Mia, he gently picked up a warm egg and smiled. "That wasn't so bad," he said.<br><br>
+Next, they helped feed the sheep and cows. The animals were bigger than Daniel expected, but they were friendly and calm. In the afternoon, they watered the vegetable garden and picked ripe tomatoes for dinner.<br><br>
+Each day, Daniel learned something new. He found out that taking care of animals was hard work but also rewarding. By the end of the week, he felt comfortable waking up early, getting muddy, and doing chores.<br><br>
+When it was time to leave, Daniel hugged his cousin and said, "Now I understand why you love living here." As the car drove away, he looked out the window and promised himself he would return next summer.`
+    },
+    'camouflage': {
+        title: 'Camouflage in Nature',
+        content: `Have you ever tried to spot a lizard on a tree or a butterfly on a flower and couldn't find it? That's because many animals use camouflage to hide from predators or catch their prey.<br><br>
+Camouflage means blending in with the surroundings. For example, a green tree frog looks like a leaf, and a sand-colored lizard disappears against desert rocks. This helps them stay safe from birds or snakes.<br><br>
+Some animals even change colors! Chameleons can turn darker or lighter depending on where they are. Arctic foxes have white fur in winter and brown fur in summer, so they always match the snow or ground.<br><br>
+Other creatures use shapes and patterns to fool enemies. The owl butterfly has spots that look like big eyes, scaring away birds that think it's a larger animal.<br><br>
+Camouflage is one of nature's clever tricks. Without it, many animals wouldn't survive in the wild.`
+    },
+    'popcorn': {
+        title: 'Why Do We Eat Popcorn at Movies?',
+        content: `Have you ever wondered why popcorn and movies go together? This tradition started in the 1930s.<br><br>
+Before that time, movie theaters were fancy places. Theater owners didn't want to sell food because they thought it would make their theaters messy. But during the Great Depression, many people didn't have much money. Theater owners needed new ways to earn money.<br><br>
+That's when they decided to sell popcorn. Popcorn was perfect because it was very cheap to make. Corn kernels cost almost nothing. Also, when popcorn popped, it created a delicious smell that made people want to buy it. People could eat it easily in the dark theater.<br><br>
+Theater owners discovered something surprising. They made more money from selling popcorn than from movie tickets! Soon, almost every theater in America started selling popcorn.<br><br>
+Today, movie theaters still make most of their profit from snacks, not tickets. That's why popcorn is so expensive at the movies—it helps theaters stay in business!`
+    }
+};
+
+// CÂU HỎI
+const questionGroups = [
+    {
+        passage: null,
+        questions: [
+            { num: 2, text: 'You are reading a book. The story is so interesting that you cannot stop reading. You want to know what happens next. You are _____.', options: { A: 'bored', B: 'confused', C: 'curious' } },
+            { num: 3, text: 'The weather does this. Prices in stores do this. Your mood can do this many times in one day. They _____.', options: { A: 'improve', B: 'vary', C: 'remain' } },
+            { num: 4, text: 'You are playing a board game with your friends. Everyone wants to win, but only one person can be first. You are _____.', options: { A: 'cooperating', B: 'competing', C: 'celebrating' } },
+            { num: 5, text: 'This word describes something that is not dirty. This word also describes water you can drink safely. This word can clean air that is good to breathe.', options: { A: 'pure', B: 'fresh', C: 'clear' } },
+            { num: 6, text: 'Your teacher gives the class a difficult math problem. You think hard and find the answer before anyone else. Your teacher is impressed. You _____ the problem.', options: { A: 'created', B: 'solved', C: 'avoided' } },
+            { num: 7, text: 'You are at the library studying. Your friend keeps talking loudly. You want to focus on your work. You ask your friend to _____.', options: { A: 'speak up', B: 'calm down', C: 'quiet down' } }
+        ]
+    },
+    {
+        passage: 'bookfair',
+        sectionTitle: 'Read the notice about the Book Fair. Answer questions 8-11.',
+        questions: [
+            { num: 8, text: 'When can parents visit the book fair after work?', options: { A: 'Any day of the week', B: 'Only on Thursday evening', C: 'On Wednesday at 2:00 PM' } },
+            { num: 9, text: 'What can you NOT buy at the book fair?', options: { A: 'Storybooks', B: 'Reading pillows', C: 'Pencils and pens' } },
+            { num: 10, text: 'How will the school use the money from the book fair?', options: { A: 'To pay the teachers', B: 'To buy books for the library', C: 'To invite more authors' } },
+            { num: 11, text: 'If you want to meet an author, when should you go?', options: { A: 'Monday morning', B: 'Thursday evening', C: 'Wednesday afternoon' } }
+        ]
+    },
+    {
+        passage: 'soccer',
+        sectionTitle: 'Read the email about soccer practice. Answer questions 12-13.',
+        questions: [
+            { num: 12, text: 'Why is the practice location changing?', options: { A: 'The gym is available this week', B: 'The outdoor field is too wet', C: 'The team needs to practice new skills' } },
+            { num: 13, text: 'What does Coach Stevens tell Marcus to bring?', options: { A: 'Indoor shoes', B: 'Soccer cleats', C: 'A towel' } }
+        ]
+    },
+    {
+        passage: 'recycling',
+        sectionTitle: 'Read the email about the recycling program. Answer questions 14-16.',
+        questions: [
+            { num: 14, text: 'What should students put in the blue bins?', options: { A: 'Plastic bottles', B: 'Paper and cardboard', C: 'Aluminum cans' } },
+            { num: 15, text: "What is the school's goal for this year?", options: { A: 'To reduce trash by 40%', B: 'To buy more recycling bins', C: 'To teach students about the environment' } },
+            { num: 16, text: 'What should students do if they are not sure where to put something?', options: { A: 'Put it in any bin', B: 'Take it home', C: 'Ask a teacher' } }
+        ]
+    },
+    {
+        passage: 'summerreading',
+        sectionTitle: 'Read the notice about the Summer Reading Program. Answer questions 17-18.',
+        questions: [
+            { num: 17, text: 'What must students do for each book they read?', options: { A: 'Tell the librarian about it', B: 'Write a short review', C: 'Draw a picture' } },
+            { num: 18, text: 'What prize do students get if they read 20 books?', options: { A: 'Only a certificate', B: 'A certificate and a bookmark', C: 'A certificate and a gift card' } }
+        ]
+    },
+    {
+        passage: 'paperairplane',
+        sectionTitle: 'Read the instructions about making a paper airplane. Answer questions 19-22.',
+        questions: [
+            { num: 19, text: 'According to the instructions, what do you do in step 1?', options: { A: 'Fold the corners down', B: 'Make a crease down the middle', C: 'Fold the paper like a triangle' } },
+            { num: 20, text: 'What does "hot dog style" mean in the instructions?', options: { A: 'Folding the short edges together', B: 'Folding the long edges together', C: 'Folding diagonally' } },
+            { num: 21, text: 'What should you do if your airplane dives down when you throw it?', options: { A: 'Throw it harder', B: 'Fold the back edges of wings up', C: 'Make new wings' } },
+            { num: 22, text: 'What is the purpose of step 5?', options: { A: 'To make the plane look nice', B: 'To help the plane fly better', C: 'To make the wings stronger' } }
+        ]
+    },
+    {
+        passage: 'goldfish',
+        sectionTitle: 'Read the instructions about taking care of a goldfish. Answer questions 23-26.',
+        questions: [
+            { num: 23, text: 'How big should a tank be for one goldfish?', options: { A: 'At least 5 gallons', B: 'At least 10 gallons', C: 'At least 20 gallons' } },
+            { num: 24, text: 'Why should you let the water sit for 24 hours?', options: { A: 'To let chemicals disappear', B: 'To make the water warmer', C: 'To let the water temperature stabilize and remove chemicals' } },
+            { num: 25, text: 'How often should you feed your goldfish?', options: { A: 'Once or twice a day', B: 'Three times a day', C: 'Every few hours' } },
+            { num: 26, text: 'According to the instructions, what should you NOT do when cleaning the tank?', options: { A: "Remove 25% of the water", B: 'Use soap to clean it', C: 'Replace old water with fresh water' } }
+        ]
+    },
+    {
+        passage: 'emma',
+        sectionTitle: "Read the story about Emma and Tyler. Answer questions 27-30.",
+        questions: [
+            { num: 27, text: 'What did Emma and Tyler decide to build?', options: { A: 'A kite', B: 'A birdhouse', C: 'A bookshelf' } },
+            { num: 28, text: 'Who helped them cut the wood?', options: { A: 'Their mom', B: 'Their friend', C: 'Their dad' } },
+            { num: 29, text: 'How did they feel when the bird used their house?', options: { A: 'Sad', B: 'Proud', C: 'Tired' } },
+            { num: 30, text: 'What lesson did they learn from this project?', options: { A: 'To work faster', B: 'To enjoy rainy days', C: 'To help each other and nature' } }
+        ]
+    },
+    {
+        passage: 'daniel',
+        sectionTitle: "Read the story about Daniel. Answer questions 31-34.",
+        questions: [
+            { num: 31, text: 'Why was Daniel nervous at first?', options: { A: "He didn't like animals", B: "He had never been to a farm", C: "He didn't know Mia well" } },
+            { num: 32, text: 'What did Daniel do on the farm?', options: { A: 'Painted the barn', B: 'Collected eggs and fed animals', C: 'Drove a tractor' } },
+            { num: 33, text: 'What did Daniel learn about farm life?', options: { A: "It's easy work", B: "It's boring", C: "It's hard but rewarding" } },
+            { num: 34, text: 'What did Daniel plan to do at the end?', options: { A: 'Move to the farm', B: 'Visit again next summer', C: 'Buy a chicken' } }
+        ]
+    },
+    {
+        passage: 'camouflage',
+        sectionTitle: 'Read about camouflage in nature. Answer questions 35-36.',
+        questions: [
+            { num: 35, text: 'What is camouflage used for?', options: { A: 'To decorate animals', B: 'To help animals hide or hunt', C: 'To make animals colorful' } },
+            { num: 36, text: 'Which animal changes color with the seasons?', options: { A: 'The chameleon', B: 'The Arctic fox', C: 'The butterfly' } }
+        ]
+    },
+    {
+        passage: 'popcorn',
+        sectionTitle: 'Read about the history of popcorn at movies. Answer question 37.',
+        questions: [
+            { num: 37, text: 'What was the main reason movie theaters started selling popcorn?', options: { A: 'Customers requested it', B: 'It was cheap to make and helped theaters earn money', C: 'Other snacks were not allowed' } }
+        ]
+    }
+];
+
+let studentInfo = {};
+let answers = {};
+let timeLeft = 1800;
+let timerInterval;
+let startTime;
+
+function startTest() {
+    const name = document.getElementById('studentName').value.trim();
+    const classVal = document.getElementById('studentClass').value.trim();
+    const phone = document.getElementById('parentPhone').value.trim();
+    
+    if (!name || !classVal || !phone) {
+        alert('Vui lòng điền đầy đủ thông tin!');
+        return;
+    }
+    
+    studentInfo = { name, class: classVal, parentPhone: phone };
+    
+    document.getElementById('infoScreen').classList.add('hidden');
+    document.getElementById('testScreen').classList.remove('hidden');
+    
+    document.getElementById('headerName').textContent = name;
+    document.getElementById('headerClass').textContent = classVal;
+    
+    renderQuestions();
+    startTimer();
+    startTime = new Date();
+}
+
+function renderQuestions() {
+    const container = document.getElementById('questionsContainer');
+    let html = '';
+    
+    questionGroups.forEach(group => {
+        if (group.sectionTitle) {
+            html += `<h3 class="text-2xl font-bold text-green-700 mb-4 mt-6 border-b-2 border-green-300 pb-2">${group.sectionTitle}</h3>`;
+        }
+        
+        if (group.passage) {
+            const passage = readingPassages[group.passage];
+            html += `
+            <div class="reading-passage">
+                <div class="passage-title">${passage.title}</div>
+                <div class="text-gray-800">${passage.content}</div>
+            </div>
+            `;
+        }
+        
+        group.questions.forEach(q => {
+            html += `
+            <div class="border-b-2 border-green-100 pb-6 mb-6 last:border-b-0">
+                <div class="flex gap-4">
+                    <div class="flex-shrink-0">
+                        <div class="w-10 h-10 bg-green-600 text-white rounded-full flex items-center justify-center font-bold">
+                            ${q.num}
+                        </div>
+                    </div>
+                    
+                    <div class="flex-1">
+                        <p class="text-gray-800 mb-4 text-lg leading-relaxed">${q.text}</p>
+                        
+                        <div class="space-y-2">
+            `;
+            
+            Object.entries(q.options).forEach(([key, value]) => {
+                html += `
+                    <label class="flex items-start gap-3 p-4 rounded-lg cursor-pointer transition-all bg-gray-50 border-2 border-gray-200 hover:bg-gray-100 answer-option" data-question="${q.num}" data-answer="${key}">
+                        <input type="radio" name="q${q.num}" value="${key}" onchange="handleAnswer(${q.num}, '${key}')"
+                            class="mt-1 w-5 h-5 text-green-600">
+                        <span class="flex-1 text-gray-700">
+                            <span class="font-semibold text-green-700">${key}.</span> ${value}
+                        </span>
+                    </label>
+                `;
+            });
+            
+            html += `
+                        </div>
+                    </div>
+                </div>
+            </div>
+            `;
+        });
+    });
+    
+    container.innerHTML = html;
+}
+
+function handleAnswer(questionNum, answer) {
+    answers[questionNum] = answer;
+    updateProgress();
+    
+    document.querySelectorAll(`label[data-question="${questionNum}"]`).forEach(label => {
+        if (label.dataset.answer === answer) {
+            label.classList.remove('bg-gray-50', 'border-gray-200');
+            label.classList.add('bg-green-100', 'border-green-500');
+        } else {
+            label.classList.remove('bg-green-100', 'border-green-500');
+            label.classList.add('bg-gray-50', 'border-gray-200');
+        }
+    });
+}
+
+function updateProgress() {
+    const answered = Object.keys(answers).length;
+    const percent = Math.round((answered / 36) * 100);
+    
+    document.getElementById('progress').textContent = answered;
+    document.getElementById('progressPercent').textContent = percent + '%';
+    document.getElementById('progressBar').style.width = percent + '%';
+    
+    const unanswered = 36 - answered;
+    if (unanswered > 0) {
+        document.getElementById('warningBox').classList.remove('hidden');
+        document.getElementById('unansweredCount').textContent = unanswered;
+    } else {
+        document.getElementById('warningBox').classList.add('hidden');
+    }
+}
+
+function startTimer() {
+    timerInterval = setInterval(() => {
+        timeLeft--;
+        
+        const minutes = Math.floor(timeLeft / 60);
+        const seconds = timeLeft % 60;
+        const timeString = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        
+        document.getElementById('timer').textContent = timeString;
+        
+        const clockIcon = document.getElementById('clockIcon');
+        const timerSpan = document.getElementById('timer');
+        
+        if (timeLeft < 300) {
+            clockIcon.classList.add('text-red-600');
+            clockIcon.classList.remove('text-green-600');
+            timerSpan.classList.add('text-red-600');
+            timerSpan.classList.remove('text-green-600');
+        }
+        
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            submitTest();
+        }
+    }, 1000);
+}
+
+// ========== PHÂN TÍCH CHI TIẾT ==========
+
+// Hàm tính điểm từng kỹ năng
+function calculateSkillScores(answers) {
+    const scores = {};
+    
+    for (const [skill, data] of Object.entries(skillCategories)) {
+        let correct = 0;
+        data.questions.forEach(qNum => {
+            if (answers[qNum] === correctAnswers[qNum]) {
+                correct++;
+            }
+        });
+        scores[skill] = {
+            correct: correct,
+            total: data.questions.length,
+            percentage: Math.round((correct / data.questions.length) * 100)
+        };
+    }
+    
+    return scores;
+}
+
+// Hàm ước lượng CEFR Level chi tiết
+function estimateCEFRLevel(totalScore, skillScores) {
+    // Phân tích theo điểm số tổng và kỹ năng
+    const vocab = skillScores.vocabulary.percentage;
+    const inference = skillScores.inference.percentage;
+    const details = skillScores.details.percentage;
+    
+    if (totalScore >= 90 && vocab >= 85 && inference >= 85) {
+        return 'B1 - Cuối (Upper B1)';
+    } else if (totalScore >= 80 && vocab >= 75) {
+        return 'B1 - Giữa (Mid B1)';
+    } else if (totalScore >= 70 && inference >= 60) {
+        return 'B1 - Đầu (Lower B1)';
+    } else if (totalScore >= 60 && details >= 65) {
+        return 'A2 - Cuối (Upper A2)';
+    } else if (totalScore >= 50) {
+        return 'A2 - Giữa (Mid A2)';
+    } else if (totalScore >= 40) {
+        return 'A2 - Đầu (Lower A2)';
+    } else if (totalScore >= 30) {
+        return 'A1 - Cuối (Upper A1)';
+    } else if (totalScore >= 20) {
+        return 'A1 - Giữa (Mid A1)';
+    } else {
+        return 'A1 - Đầu (Lower A1)';
+    }
+}
+
+// Hàm đánh giá tổng quan
+function generateOverallAssessment(totalScore, cefrLevel, skillScores) {
+    let assessment = `Học sinh đạt ${totalScore}% (${cefrLevel}). `;
+    
+    if (totalScore >= 80) {
+        assessment += 'Năng lực tiếng Anh rất tốt, có thể hiểu và phân tích các bài đọc phức tạp. ';
+    } else if (totalScore >= 60) {
+        assessment += 'Năng lực tiếng Anh khá, có thể hiểu nội dung chính và một số chi tiết. ';
+    } else if (totalScore >= 40) {
+        assessment += 'Năng lực tiếng Anh cơ bản, cần cải thiện thêm để nắm vững các kỹ năng đọc hiểu. ';
+    } else {
+        assessment += 'Năng lực tiếng Anh còn yếu, cần tập trung học từ vựng và kỹ năng đọc hiểu cơ bản. ';
+    }
+    
+    return assessment;
+}
+
+// Hàm phân tích từ vựng chi tiết
+function analyzeVocabulary(skillScores) {
+    const vocabScore = skillScores.vocabulary.percentage;
+    let analysis = '';
+    
+    if (vocabScore >= 85) {
+        analysis = 'Từ vựng xuất sắc (A2-B1). Học sinh hiểu rất tốt từ ngữ theo ngữ cảnh, từ đồng nghĩa, và định nghĩa. ';
+    } else if (vocabScore >= 70) {
+        analysis = 'Từ vựng khá tốt (A2). Học sinh nắm được phần lớn từ vựng cơ bản nhưng cần mở rộng vốn từ B1. ';
+    } else if (vocabScore >= 50) {
+        analysis = `Từ vựng trung bình (A1-A2). Cần học thêm từ vựng về: cảm xúc (emotions), thay đổi (change), giải quyết vấn đề (problem-solving), hành vi (behavior). `;
+    } else {
+        analysis = `Từ vựng còn yếu (A1). Cần tập trung học từ vựng cơ bản hàng ngày qua: flashcards, ứng dụng Quizlet, đọc truyện tranh tiếng Anh. `;
+    }
+    
+    return analysis;
+}
+
+// Hàm phân tích kỹ năng đọc hiểu chi tiết
+function analyzeReadingSkills(skillScores) {
+    let analysis = 'Kỹ năng đọc hiểu: ';
+    const strengths = [];
+    const weaknesses = [];
+    
+    if (skillScores.details.percentage >= 75) {
+        strengths.push('tìm chi tiết');
+    } else if (skillScores.details.percentage < 60) {
+        weaknesses.push('tìm chi tiết trong bài (cần đọc kỹ từng câu)');
+    }
+    
+    if (skillScores.mainIdea.percentage >= 75) {
+        strengths.push('xác định ý chính');
+    } else if (skillScores.mainIdea.percentage < 60) {
+        weaknesses.push('xác định ý chính (cần luyện tóm tắt đoạn văn)');
+    }
+    
+    if (skillScores.inference.percentage >= 75) {
+        strengths.push('suy luận');
+    } else if (skillScores.inference.percentage < 60) {
+        weaknesses.push('suy luận ẩn ý (cần đọc giữa các dòng)');
+    }
+    
+    if (skillScores.sequence.percentage >= 75) {
+        strengths.push('hiểu trình tự');
+    } else if (skillScores.sequence.percentage < 60) {
+        weaknesses.push('hiểu trình tự hướng dẫn (cần luyện đọc instructions)');
+    }
+    
+    if (strengths.length > 0) {
+        analysis += `Điểm mạnh: ${strengths.join(', ')}. `;
+    }
+    
+    if (weaknesses.length > 0) {
+        analysis += `Cần cải thiện: ${weaknesses.join(', ')}. `;
+    } else {
+        analysis += 'Tất cả các kỹ năng đọc đều tốt. ';
+    }
+    
+    return analysis;
+}
+
+// Hàm tạo điểm mạnh chi tiết
+function generateDetailedStrengths(skillScores) {
+    const strengths = [];
+    
+    for (const [skill, data] of Object.entries(skillScores)) {
+        if (data.percentage >= 75) {
+            strengths.push(`${skillCategories[skill].name} (${data.percentage}%)`);
+        }
+    }
+    
+    if (strengths.length === 0) {
+        return 'Cần cố gắng thêm để phát triển điểm mạnh';
+    }
+    
+    return strengths.join(', ');
+}
+
+// Hàm tạo điểm yếu chi tiết
+function generateDetailedWeaknesses(skillScores) {
+    const weaknesses = [];
+    
+    for (const [skill, data] of Object.entries(skillScores)) {
+        if (data.percentage < 60) {
+            weaknesses.push(`${skillCategories[skill].name} (${data.percentage}%) - Trình độ ${skillCategories[skill].level}`);
+        }
+    }
+    
+    if (weaknesses.length === 0) {
+        return 'Không có điểm yếu đáng kể';
+    }
+    
+    return weaknesses.join(' | ');
+}
+
+// Hàm tạo gợi ý cải thiện CHI TIẾT
+function generateDetailedRecommendations(totalScore, skillScores, cefrLevel) {
+    let recommendations = '';
+    
+    // Gợi ý theo từng kỹ năng yếu
+    if (skillScores.vocabulary.percentage < 60) {
+        recommendations += '📚 TỪ VỰNG: ';
+        recommendations += '(1) Học 10-15 từ mới mỗi ngày qua Quizlet hoặc Anki; ';
+        recommendations += '(2) Đọc sách truyện tranh tiếng Anh trình độ A1-A2; ';
+        recommendations += '(3) Xem phim hoạt hình có phụ đề tiếng Anh. ';
+    }
+    
+    if (skillScores.details.percentage < 60) {
+        recommendations += '🔍 CHI TIẾT: ';
+        recommendations += '(1) Luyện scanning (quét tìm thông tin cụ thể); ';
+        recommendations += '(2) Đọc lại câu hỏi 2 lần trước khi tìm đáp án; ';
+        recommendations += '(3) Gạch chân keywords trong câu hỏi. ';
+    }
+    
+    if (skillScores.mainIdea.percentage < 60) {
+        recommendations += '💡 Ý CHÍNH: ';
+        recommendations += '(1) Đọc câu đầu và câu cuối mỗi đoạn; ';
+        recommendations += '(2) Luyện tóm tắt đoạn văn bằng 1 câu; ';
+        recommendations += '(3) Tìm từ khóa lặp lại nhiều lần trong bài. ';
+    }
+    
+    if (skillScores.inference.percentage < 60) {
+        recommendations += '🧠 SUY LUẬN: ';
+        recommendations += '(1) Học cách "đọc giữa các dòng"; ';
+        recommendations += '(2) Suy nghĩ "tác giả muốn nói gì?"; ';
+        recommendations += '(3) Luyện đọc các bài có inference questions. ';
+    }
+    
+    if (skillScores.sequence.percentage < 60) {
+        recommendations += '📋 TRÌNH TỰ: ';
+        recommendations += '(1) Luyện đọc instructions (công thức nấu ăn, hướng dẫn làm đồ thủ công); ';
+        recommendations += '(2) Chú ý các từ: first, then, next, finally; ';
+        recommendations += '(3) Vẽ sơ đồ các bước khi đọc. ';
+    }
+    
+    // Gợi ý nâng cấp lên level cao hơn
+    if (cefrLevel.includes('A1')) {
+        recommendations += '\n🎯 MUC TIÊU: Để đạt A2, cần: (1) Nắm 500-1000 từ vựng cơ bản; (2) Đọc được bài ngắn 100-150 từ; (3) Hiểu ý chính và chi tiết đơn giản. ';
+    } else if (cefrLevel.includes('A2')) {
+        recommendations += '\n🎯 MỤC TIÊU: Để đạt B1, cần: (1) Nắm 1500-2000 từ vựng; (2) Đọc được bài 200-300 từ; (3) Hiểu được ẩn ý và suy luận. ';
+    } else if (cefrLevel.includes('B1')) {
+        recommendations += '\n🎯 MỤC TIÊU: Duy trì và nâng cao B1, cần: (1) Đọc sách, báo tiếng Anh thường xuyên; (2) Học từ vựng academic; (3) Luyện IELTS Reading hoặc TOEFL Junior. ';
+    }
+    
+    // Gợi ý tài liệu học
+    recommendations += '\n📖 TÀI LIỆU ĐỀ XUẤT: ';
+    if (totalScore < 50) {
+        recommendations += 'Oxford Read and Discover Level 1-2, Cambridge Storybooks Level 1-2, Reading Explorer Foundations. ';
+    } else if (totalScore < 70) {
+        recommendations += 'Oxford Read and Discover Level 3-4, Cambridge Storybooks Level 3-4, Reading Explorer 1. ';
+    } else {
+        recommendations += 'Oxford Read and Discover Level 5-6, Cambridge Storybooks Level 5-6, Reading Explorer 2. ';
+    }
+    
+    return recommendations.trim();
+}
+
+async function submitTest() {
+    clearInterval(timerInterval);
+    
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = `
+        <div class="spinner"></div>
+        <span>Đang phân tích và nộp bài...</span>
+    `;
+    
+    // Tính điểm tổng
+    let correctCount = 0;
+let wrongQuestions = []; // Thêm dòng này
+
+Object.keys(correctAnswers).forEach(q => {
+    if (answers[q] === correctAnswers[q]) {
+        correctCount++;
+    } else if (answers[q]) { // Nếu đã trả lời nhưng sai
+        wrongQuestions.push(q);
+    }
+});
+
+// Chuyển mảng thành chuỗi
+const wrongQuestionsText = wrongQuestions.length > 0 
+    ? wrongQuestions.join(', ') 
+    : 'Không có';
+    
+    const totalScore = Math.round((correctCount / 36) * 100);
+    const endTime = new Date();
+    const timeUsed = Math.round((endTime - startTime) / 60000);
+    
+    // PHÂN TÍCH CHI TIẾT
+    const skillScores = calculateSkillScores(answers);
+    const cefrLevel = estimateCEFRLevel(totalScore, skillScores);
+    const overallAssessment = generateOverallAssessment(totalScore, cefrLevel, skillScores);
+    const vocabularyAnalysis = analyzeVocabulary(skillScores);
+    const readingAnalysis = analyzeReadingSkills(skillScores);
+    const strengthsDetail = generateDetailedStrengths(skillScores);
+    const weaknessesDetail = generateDetailedWeaknesses(skillScores);
+    const recommendationsDetail = generateDetailedRecommendations(totalScore, skillScores, cefrLevel);
+    
+    // Dữ liệu gửi lên Google Sheet
+    const dataToSend = {
+        timestamp: new Date().toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' }),
+        name: studentInfo.name,
+        class: studentInfo.class,
+        parentPhone: studentInfo.parentPhone,
+        score: totalScore,
+        correctAnswers: correctCount,
+        totalQuestions: 36,
+        timeUsed: timeUsed + ' phút',
+        cefrLevel: cefrLevel,
+        vocabularyScore: skillScores.vocabulary.percentage,
+        mainIdeaScore: skillScores.mainIdea.percentage,
+        detailsScore: skillScores.details.percentage,
+        inferenceScore: skillScores.inference.percentage,
+        sequenceScore: skillScores.sequence.percentage,
+        purposeScore: skillScores.purpose.percentage,
+        overallAssessment: overallAssessment,
+        vocabularyAnalysis: vocabularyAnalysis,
+        readingAnalysis: readingAnalysis,
+        strengthsDetail: strengthsDetail,
+        weaknessesDetail: weaknessesDetail,
+        recommendationsDetail: recommendationsDetail,
+        wrongQuestions: wrongQuestionsText, // THÊM DÒNG NÀY     
+        answers: JSON.stringify(answers)
+    };
+    
+    try {
+        await fetch(GOOGLE_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(dataToSend)
+        });
+        
+        console.log('Đã gửi kết quả chi tiết lên Google Sheets');
+    } catch (error) {
+        console.error('Lỗi khi gửi dữ liệu:', error);
+    }
+    
+    document.getElementById('testScreen').classList.add('hidden');
+    document.getElementById('resultScreen').classList.remove('hidden');
+    
+    document.getElementById('resultName').textContent = studentInfo.name;
+    document.getElementById('resultTime').textContent = timeUsed + ' phút';
+    document.getElementById('resultPhone').textContent = studentInfo.parentPhone;
+}
+</script>
+
+</body>
+</html>
