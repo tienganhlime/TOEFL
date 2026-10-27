@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TOEFL Primary Listening Test - Trung Tâm Tiếng Anh LIME</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 50%, #90CAF9 100%);
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #1976D2;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .audio-player-main {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #1976D2 0%, #1565C0 100%);
+            border-radius: 16px;
+            padding: 20px 30px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+            z-index: 9999;
+            min-width: 320px;
+        }
+        .audio-controls-main {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .play-btn-main {
+            background: white;
+            color: #1976D2;
+            border: none;
+            border-radius: 50%;
+            width: 56px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 24px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        .play-btn-main:hover {
+            transform: scale(1.1);
+        }
+        .play-btn-main:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .audio-info-main {
+            color: white;
+            flex: 1;
+        }
+        .volume-control {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: white;
+        }
+        .volume-slider {
+            width: 100px;
+            height: 6px;
+            border-radius: 3px;
+            background: rgba(255,255,255,0.3);
+            outline: none;
+            cursor: pointer;
+        }
+        .question-image {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 16px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .question-image img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        .question-image img:hover {
+            transform: scale(1.02);
+        }
+    </style>
+</head>
+<body>
+
+<!-- Màn hình nhập thông tin -->
+<div id="infoScreen" class="min-h-screen p-4 fade-in">
+    <div class="max-w-2xl mx-auto">
+        <div class="bg-white rounded-2xl shadow-2xl p-8 mt-8">
+            <div class="text-center mb-8">
+                <img src="https://gofirst.pro/images/uploads/62/baseimg/logo_16541442053.png" 
+                     alt="LIME Logo" 
+                     class="w-32 h-32 mx-auto mb-4 object-contain">
+                <h1 class="text-4xl font-bold text-blue-700 mb-2">Trung Tâm Tiếng Anh LIME</h1>
+                <p class="text-blue-600 text-lg">Hotline: 0976222792</p>
+                <div class="mt-4 h-1 w-32 bg-blue-500 mx-auto rounded"></div>
+            </div>
+            
+            <div class="bg-blue-50 rounded-xl p-6 mb-6">
+                <h2 class="text-2xl font-bold text-blue-800 mb-4">TOEFL PRIMARY STEP 2 - LISTENING TEST</h2>
+                <div class="space-y-2 text-blue-700">
+                    <p>🎧 Số câu hỏi: 39 câu</p>
+                    <p>⏰ Thời gian: Theo độ dài bài nghe (~40 phút)</p>
+                    <p>📊 Audio sẽ phát liên tục từ đầu đến cuối</p>
+                    <p>✅ Làm bài trực tuyến, chấm điểm tự động</p>
+                    <p>📊 Phân tích chi tiết năng lực học sinh</p>
+                </div>
+            </div>
+
+            <div class="bg-yellow-50 border-2 border-yellow-300 rounded-xl p-4 mb-6">
+                <div class="flex items-start gap-2">
+                    <svg class="w-6 h-6 text-yellow-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                    </svg>
+                    <div class="text-yellow-800 text-sm">
+                        <p class="font-bold mb-1">⚠️ Lưu ý quan trọng:</p>
+                        <p>• Đảm bảo âm lượng thiết bị ở mức vừa phải</p>
+                        <p>• Audio sẽ chạy liên tục, không thể dừng hoặc tua lại</p>
+                        <p>• Khi audio kết thúc = hết giờ làm bài</p>
+                        <p>• Hãy tập trung cao độ khi làm bài!</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-blue-800 font-semibold mb-2">Họ và tên học sinh *</label>
+                    <input type="text" id="studentName" 
+                        class="w-full px-4 py-3 border-2 border-blue-300 rounded-lg focus:border-blue-500 focus:outline-none"
+                        placeholder="Nhập họ tên">
+                </div>
+                
+                <div>
+                    <label class="block text-blue-800 font-semibold mb-2">Lớp *</label>
+                    <input type="text" id="studentClass" 
+                        class="w-full px-4 py-3 border-2 border-blue-300 rounded-lg focus:border-blue-500 focus:outline-none"
+                        placeholder="Nhập lớp">
+                </div>
+                
+                <div>
+                    <label class="block text-blue-800 font-semibold mb-2">Số điện thoại phụ huynh *</label>
+                    <input type="tel" id="parentPhone" 
+                        class="w-full px-4 py-3 border-2 border-blue-300 rounded-lg focus:border-blue-500 focus:outline-none"
+                        placeholder="Nhập số điện thoại">
+                </div>
+            </div>
+
+            <button onclick="startTest()" 
+                class="w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-6 rounded-lg transition duration-300 text-lg shadow-lg">
+                BẮT ĐẦU LÀM BÀI
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Màn hình làm bài -->
+<div id="testScreen" class="hidden min-h-screen p-4 pb-32">
+    <div class="max-w-5xl mx-auto">
+        <!-- Header sticky -->
+        <div class="bg-white rounded-2xl shadow-2xl p-6 mb-6 sticky top-4 z-10">
+            <div class="flex justify-between items-center flex-wrap gap-4">
+                <div class="flex items-center gap-3">
+                    <img src="https://gofirst.pro/images/uploads/62/baseimg/logo_16541442053.png" 
+                         alt="LIME Logo" 
+                         class="w-12 h-12 object-contain">
+                    <div>
+                        <h1 class="text-2xl font-bold text-blue-700">Trung Tâm Tiếng Anh LIME</h1>
+                        <p class="text-blue-600 text-sm">Hotline: 0976222792</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-6">
+                    <div class="text-right">
+                        <p class="text-sm text-gray-600">Học sinh: <span id="headerName"></span></p>
+                        <p class="text-sm text-gray-600">Lớp: <span id="headerClass"></span></p>
+                    </div>
+                    
+                    <div class="flex items-center gap-2 bg-blue-100 px-4 py-2 rounded-lg">
+                        <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path>
+                        </svg>
+                        <span id="audioStatus" class="text-sm font-bold text-blue-600">Audio: Ready</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-4">
+                <div class="flex justify-between text-sm text-gray-600 mb-1">
+                    <span>Tiến độ: <span id="progress">0</span>/39 câu</span>
+                    <span id="progressPercent">0%</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-3">
+                    <div id="progressBar" class="bg-blue-600 h-3 rounded-full transition-all duration-300" style="width: 0%"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Nội dung bài test -->
+        <div class="bg-white rounded-2xl shadow-2xl p-8">
+            <h2 class="text-3xl font-bold text-blue-800 mb-6 text-center">TOEFL PRIMARY STEP 2 - LISTENING TEST</h2>
+            
+            <div id="questionsContainer" class="space-y-8">
+                <!-- Questions will be inserted here by JavaScript -->
+            </div>
+
+            <div class="mt-8 pt-6 border-t-2 border-blue-200">
+                <button onclick="submitTest()" id="submitBtn"
+                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-6 rounded-lg transition duration-300 text-xl shadow-lg flex items-center justify-center gap-2">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    NỘP BÀI
+                </button>
+                
+                <div id="warningBox" class="hidden mt-4 p-4 bg-yellow-50 border-2 border-yellow-300 rounded-lg flex items-start gap-2">
+                    <svg class="w-5 h-5 text-yellow-600 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                    </svg>
+                    <p class="text-yellow-800 text-sm">
+                        Bạn còn <span id="unansweredCount">39</span> câu chưa trả lời. Hãy kiểm tra lại trước khi nộp bài!
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Audio Player cố định -->
+<div id="audioPlayerMain" class="audio-player-main hidden">
+    <div class="audio-controls-main">
+        <button class="play-btn-main" onclick="toggleAudio()" id="playBtnMain">
+            ▶
+        </button>
+        <div class="audio-info-main">
+            <div class="font-bold text-lg">Listening Test Audio</div>
+            <div class="text-sm opacity-90" id="audioTime">00:00 / 00:00</div>
+        </div>
+        <div class="volume-control">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217zM14.657 2.929a1 1 0 011.414 0A9.972 9.972 0 0119 10a9.972 9.972 0 01-2.929 7.071 1 1 0 01-1.414-1.414A7.971 7.971 0 0017 10c0-2.21-.894-4.208-2.343-5.657a1 1 0 010-1.414zm-2.829 2.828a1 1 0 011.415 0A5.983 5.983 0 0115 10a5.984 5.984 0 01-1.757 4.243 1 1 0 01-1.415-1.415A3.984 3.984 0 0013 10a3.983 3.983 0 00-1.172-2.828 1 1 0 010-1.415z"></path>
+            </svg>
+            <input type="range" min="0" max="100" value="100" class="volume-slider" onchange="setVolume(this.value)" id="volumeSlider">
+        </div>
+    </div>
+    <audio id="mainAudio" onended="onAudioComplete()" ontimeupdate="updateAudioTime()">
+        <source src="" type="audio/mpeg">
+    </audio>
+</div>
+
+<!-- Màn hình kết quả -->
+<div id="resultScreen" class="hidden min-h-screen p-4">
+    <div class="max-w-3xl mx-auto">
+        <div class="bg-white rounded-2xl shadow-2xl p-8 mt-8 fade-in">
+            <div class="text-center mb-6">
+                <img src="https://gofirst.pro/images/uploads/62/baseimg/logo_16541442053.png" 
+                     alt="LIME Logo" 
+                     class="w-32 h-32 mx-auto mb-4 object-contain">
+                <h1 class="text-3xl font-bold text-blue-700 mb-2">Trung Tâm Tiếng Anh LIME</h1>
+                <p class="text-blue-600">Hotline: 0976222792</p>
+            </div>
+
+            <div class="text-center mb-8">
+                <svg class="w-24 h-24 text-blue-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <h2 class="text-3xl font-bold text-blue-800 mb-4">Nộp bài thành công!</h2>
+                <p class="text-xl text-gray-700 mb-2">Cảm ơn em <span id="resultName" class="font-bold text-blue-700"></span> đã hoàn thành bài test!</p>
+            </div>
+
+            <div class="bg-blue-50 rounded-xl p-6 mb-6 border-2 border-blue-200">
+                <div class="text-center space-y-3">
+                    <p class="text-lg text-gray-700">📝 Bài làm của em đã được gửi về giáo viên</p>
+                    <p class="text-lg text-gray-700">⏰ Thời gian làm bài: <span id="resultTime" class="font-bold text-blue-700"></span></p>
+                    <p class="text-lg text-gray-700">📊 Giáo viên sẽ phân tích chi tiết và liên hệ phụ huynh</p>
+                </div>
+            </div>
+
+            <div class="bg-yellow-50 border-2 border-yellow-200 rounded-xl p-6 mb-6">
+                <div class="flex items-start gap-3">
+                    <svg class="w-6 h-6 text-yellow-600 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <div>
+                        <h3 class="font-bold text-yellow-800 mb-2">📞 Lưu ý quan trọng:</h3>
+                        <p class="text-yellow-700">
+                            Giáo viên sẽ liên hệ phụ huynh qua số <span id="resultPhone" class="font-bold"></span> để thông báo kết quả chi tiết. 
+                            Vui lòng chú ý điện thoại nhé!
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="location.reload()" 
+                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-6 rounded-lg transition duration-300 text-lg shadow-lg">
+                Về trang chủ
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+// *** CẬP NHẬT URL - ĐÃ THAY ĐỔI ***
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyS26w59LpItfEFgM-gtQeNw9r4ahNXv2ehOATCbipUgZmj3Vvrio8uJuwaanCFlVe1/exec';
+const AUDIO_URL = 'https://res.cloudinary.com/dwjm43pu9/video/upload/v1760689241/TOEFL_Primary___Practice_Tests___Step_2_l_All_English_4U_ecmkcu.mp3';
+
+// Đáp án đúng
+const correctAnswers = {
+    1: 'B', 2: 'A', 3: 'B', 4: 'A', 5: 'B', 6: 'B', 7: 'A',
+    8: 'C', 9: 'C', 10: 'B', 11: 'A', 12: 'B', 13: 'B', 14: 'B',
+    15: 'B', 16: 'A', 17: 'A', 18: 'B', 19: 'B', 20: 'A', 21: 'A',
+    22: 'C', 23: 'B', 24: 'B', 25: 'A',
+    26: 'C', 27: 'A', 28: 'A', 29: 'C',
+    30: 'C', 31: 'B', 32: 'C',
+    33: 'A', 34: 'C', 35: 'B',
+    36: 'B', 37: 'A', 38: 'B', 39: 'C'
+};
+
+// PHÂN LOẠI CHI TIẾT CÁC KỸ NĂNG LISTENING
+const skillCategories = {
+    basicComprehension: {
+        questions: [1, 2, 3, 4, 5, 6, 7, 23, 27],
+        name: 'Hiểu cơ bản (Basic Comprehension)',
+        level: 'A1-A2'
+    },
+    mainIdea: {
+        questions: [22, 30, 33, 36],
+        name: 'Ý chính (Main Idea)',
+        level: 'A2-B1'
+    },
+    details: {
+        questions: [8, 9, 10, 11, 12, 14, 24, 25, 28, 31, 32, 37, 38],
+        name: 'Chi tiết (Details)',
+        level: 'A2'
+    },
+    inference: {
+        questions: [13, 18, 19, 29, 34, 35, 39],
+        name: 'Suy luận (Inference)',
+        level: 'B1'
+    },
+    purpose: {
+        questions: [15, 16, 17, 20, 21, 26],
+        name: 'Mục đích/Chức năng (Purpose/Function)',
+        level: 'A2-B1'
+    }
+};
+
+// Link hình ảnh
+const questionImages = {
+    1: 'https://i.ibb.co/gZQTrm8w/1.png',
+    2: 'https://i.ibb.co/B25pmnmr/2.png',
+    3: 'https://i.ibb.co/Mxwmk27y/3.png',
+    4: 'https://i.ibb.co/QvLjQ7GT/4.png',
+    5: 'https://i.ibb.co/NgXtJCbd/5.png',
+    6: 'https://i.ibb.co/hJPqH7t7/6.png',
+    7: 'https://i.ibb.co/2YZLWKXL/7.png'
+};
+
+const questions = [
+    // PART 1: Questions 1-7 (với hình ảnh)
+    { num: 1, part: 1, type: 'image', text: '', options: { A: 'Answer A', B: 'Answer B', C: 'Answer C' } },
+    { num: 2, part: 1, type: 'image', text: '', options: { A: 'Answer A', B: 'Answer B', C: 'Answer C' } },
+    { num: 3, part: 1, type: 'image', text: '', options: { A: 'Answer A', B: 'Answer B', C: 'Answer C' } },
+    { num: 4, part: 1, type: 'image', text: '', options: { A: 'Answer A', B: 'Answer B', C: 'Answer C' } },
+    { num: 5, part: 1, type: 'image', text: '', options: { A: 'Answer A', B: 'Answer B', C: 'Answer C' } },
+    { num: 6, part: 1, type: 'image', text: '', options: { A: 'Answer A', B: 'Answer B', C: 'Answer C' } },
+    { num: 7, part: 1, type: 'image', text: '', options: { A: 'Answer A', B: 'Answer B', C: 'Answer C' } },
+    
+    // PART 2: Questions 8-14
+    { num: 8, part: 2, type: 'text', text: 'When is the girl\'s party?', options: { A: 'Tonight', B: 'Next week', C: 'This weekend' } },
+    { num: 9, part: 2, type: 'text', text: 'What will the girl do next?', options: { A: 'Buy some new clothes', B: 'Quickly wash her clothes', C: 'Find different clothes to wear' } },
+    { num: 10, part: 2, type: 'text', text: 'What did the boy enjoy most during the class trip?', options: { A: 'The video about dinosaurs', B: 'The pictures of ocean life', C: 'The room of rocks' } },
+    { num: 11, part: 2, type: 'text', text: 'What will the boy and girl do next?', options: { A: 'Go to the library', B: 'Draw a picture of a flower', C: 'Buy some colored pencils' } },
+    { num: 12, part: 2, type: 'text', text: 'Why does the girl write down her phone number?', options: { A: 'Because she wants her friend to call her', B: 'Because she wants to know when a book arrives', C: 'Because she wants to find someone to play a game with' } },
+    { num: 13, part: 2, type: 'text', text: 'What does the boy want the girl to do?', options: { A: 'Go to the library to get some books', B: 'Work on a project at his house', C: 'Stay after school to study for a test' } },
+    { num: 14, part: 2, type: 'text', text: 'What is the boy going to do on Saturday?', options: { A: 'Ride his bike', B: 'Look at butterflies', C: 'Buy some flowers' } },
+    
+    // PART 3: Questions 15-21
+    { num: 15, part: 3, type: 'text', text: 'What did Mike call about?', options: { A: 'Homework', B: 'A movie', C: 'A library book' } },
+    { num: 16, part: 3, type: 'text', text: 'What will Carmen do tomorrow?', options: { A: 'Give a book to Tracy', B: 'Look for a book at the library', C: 'Talk about a book with Tracy' } },
+    { num: 17, part: 3, type: 'text', text: 'Why did Colin call?', options: { A: 'To invite him to work at his house', B: 'To ask what he needs to do for homework', C: 'To tell him what to buy at the store' } },
+    { num: 18, part: 3, type: 'text', text: 'What will Gabe do tomorrow?', options: { A: 'Play a game with a friend', B: 'Clean his room', C: 'Visit his grandmother\'s house' } },
+    { num: 19, part: 3, type: 'text', text: 'What will the boy do on Saturday?', options: { A: 'Go to a ball game', B: 'Help his parents move', C: 'Watch a movie' } },
+    { num: 20, part: 3, type: 'text', text: 'Why did Roger call?', options: { A: 'To tell Shawn they are going to be on the baseball team', B: 'To ask Shawn to go to a baseball game after school', C: 'To remind Shawn to go to baseball practice' } },
+    { num: 21, part: 3, type: 'text', text: 'Why did Ms. Eng call?', options: { A: 'To tell Nellie where the game is going to be', B: 'To tell Nellie to bring soccer balls tomorrow', C: 'To ask Nellie about the weather' } },
+    
+    // PART 4: Questions 22-39
+    { num: 22, part: 4, type: 'text', text: 'What is the story about?', options: { A: 'A cat playing in the garden', B: 'A cat searching for some food', C: 'A cat looking for his friends' } },
+    { num: 23, part: 4, type: 'text', text: 'Where did Max go first?', options: { A: 'The kitchen', B: 'The living room', C: 'The garden' } },
+    { num: 24, part: 4, type: 'text', text: 'What did Max think he would see at the table?', options: { A: 'The family having dinner', B: 'The children doing homework', C: 'The children playing a game' } },
+    { num: 25, part: 4, type: 'text', text: 'What were the children doing during the story?', options: { A: 'Building something', B: 'Cooking dinner', C: 'Watching television' } },
+    
+    { num: 26, part: 4, type: 'text', text: 'Who talks about leaving on time?', options: { A: 'Ricky', B: 'Adam', C: 'The father' } },
+    { num: 27, part: 4, type: 'text', text: 'Why are Ricky and Adam hungry?', options: { A: 'They ate breakfast early', B: 'They smelled food in the basket', C: 'They did not like the food at lunch' } },
+    { num: 28, part: 4, type: 'text', text: 'What will Ricky and Adam do at the beach?', options: { A: 'Play with their pails and kite', B: 'Swim in the water', C: 'Play with a beach ball' } },
+    { num: 29, part: 4, type: 'text', text: 'Who is Adam?', options: { A: 'Ricky\'s father', B: 'Ricky\'s friend', C: 'Ricky\'s brother' } },
+    
+    { num: 30, part: 4, type: 'text', text: 'What is special about the homing pigeon?', options: { A: 'They like to live inside houses', B: 'They build large homes for their young', C: 'They can always find their way home' } },
+    { num: 31, part: 4, type: 'text', text: 'What is true about these birds?', options: { A: 'They carry heavy objects', B: 'They fly very fast', C: 'They make very loud noises' } },
+    { num: 32, part: 4, type: 'text', text: 'How did these birds help people in the past?', options: { A: 'They found important objects', B: 'They build nests in safe places', C: 'They carried letters' } },
+    
+    { num: 33, part: 4, type: 'text', text: 'How are whales different from fish?', options: { A: 'They breathe air', B: 'They live in water', C: 'They move their tails to swim' } },
+    { num: 34, part: 4, type: 'text', text: 'What do whale songs sound like?', options: { A: 'Other ocean animal sounds', B: 'People singing', C: 'Strange noises' } },
+    { num: 35, part: 4, type: 'text', text: 'Why do whales sing?', options: { A: 'To frighten other animals', B: 'To find food', C: 'To play with their children' } },
+    
+    { num: 36, part: 4, type: 'text', text: 'What is a good name for this lesson?', options: { A: 'How to build new boats', B: 'Learning from an old boat', C: 'Why old boats are better than new boats' } },
+    { num: 37, part: 4, type: 'text', text: 'How did people find the old boat?', options: { A: 'Divers swam to it', B: 'Workers used computers', C: 'People saw it from a boat' } },
+    { num: 38, part: 4, type: 'text', text: 'How did the workers build the new boat?', options: { A: 'They used parts of old boats', B: 'They used wood and small machines', C: 'They used computers and large machines' } },
+    { num: 39, part: 4, type: 'text', text: 'Where did the workers go on the new boat?', options: { A: 'Oman', B: 'Africa', C: 'Singapore' } }
+];
+
+let studentInfo = {};
+let answers = {};
+let startTime;
+let audioElement = null;
+let isAudioPlaying = false;
+
+function startTest() {
+    const name = document.getElementById('studentName').value.trim();
+    const classVal = document.getElementById('studentClass').value.trim();
+    const phone = document.getElementById('parentPhone').value.trim();
+    
+    if (!name || !classVal || !phone) {
+        alert('Vui lòng điền đầy đủ thông tin!');
+        return;
+    }
+    
+    studentInfo = { name, class: classVal, parentPhone: phone };
+    
+    document.getElementById('infoScreen').classList.add('hidden');
+    document.getElementById('testScreen').classList.remove('hidden');
+    document.getElementById('audioPlayerMain').classList.remove('hidden');
+    
+    document.getElementById('headerName').textContent = name;
+    document.getElementById('headerClass').textContent = classVal;
+    
+    renderQuestions();
+    setupAudio();
+    startTime = new Date();
+}
+
+function setupAudio() {
+    audioElement = document.getElementById('mainAudio');
+    audioElement.src = AUDIO_URL;
+    
+    audioElement.addEventListener('canplaythrough', function() {
+        document.getElementById('audioStatus').textContent = 'Audio: Ready to play';
+    });
+    
+    audioElement.addEventListener('error', function() {
+        document.getElementById('audioStatus').textContent = 'Audio: Error loading';
+        console.error('Lỗi tải audio:', audioElement.error);
+    });
+    
+    audioElement.load();
+}
+
+function toggleAudio() {
+    if (!audioElement) return;
+    
+    const playBtn = document.getElementById('playBtnMain');
+    const statusSpan = document.getElementById('audioStatus');
+    
+    if (isAudioPlaying) {
+        audioElement.pause();
+        playBtn.textContent = '▶';
+        statusSpan.textContent = 'Audio: Paused';
+        isAudioPlaying = false;
+    } else {
+        audioElement.play();
+        playBtn.textContent = '⏸';
+        statusSpan.textContent = 'Audio: Playing';
+        isAudioPlaying = true;
+    }
+}
+
+function setVolume(value) {
+    if (audioElement) {
+        audioElement.volume = value / 100;
+    }
+}
+
+function updateAudioTime() {
+    if (!audioElement) return;
+    
+    const current = formatTime(audioElement.currentTime);
+    const duration = formatTime(audioElement.duration);
+    document.getElementById('audioTime').textContent = `${current} / ${duration}`;
+}
+
+function formatTime(seconds) {
+    if (isNaN(seconds)) return '00:00';
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+}
+
+function onAudioComplete() {
+    const playBtn = document.getElementById('playBtnMain');
+    const statusSpan = document.getElementById('audioStatus');
+    
+    playBtn.textContent = '✓';
+    statusSpan.textContent = 'Audio: Completed';
+    isAudioPlaying = false;
+    
+    setTimeout(() => {
+        alert('⏰ Đã hết thời gian làm bài! Hệ thống sẽ tự động nộp bài.');
+        submitTest();
+    }, 2000);
+}
+
+function renderQuestions() {
+    const container = document.getElementById('questionsContainer');
+    let html = '';
+    let currentPart = 0;
+    
+    const partTitles = {
+        1: 'Part 1: Look at the pictures and listen',
+        2: 'Part 2: Listen to conversations and answer the questions',
+        3: 'Part 3: Listen to phone messages and answer the questions',
+        4: 'Part 4: Listen to stories and answer the questions'
+    };
+    
+    questions.forEach((q) => {
+        if (q.part !== currentPart) {
+            currentPart = q.part;
+            html += `
+            <div class="bg-blue-600 text-white p-4 rounded-xl mb-6 mt-8">
+                <h3 class="text-2xl font-bold text-center">${partTitles[currentPart]}</h3>
+            </div>
+            `;
+        }
+        
+        html += `
+        <div class="border-2 border-blue-200 rounded-xl p-6 mb-6 bg-gray-50">
+            <div class="flex gap-4">
+                <div class="flex-shrink-0">
+                    <div class="w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">
+                        ${q.num}
+                    </div>
+                </div>
+                
+                <div class="flex-1">
+        `;
+        
+        if (q.type === 'image' && questionImages[q.num]) {
+            html += `
+                    <div class="question-image">
+                        <img src="${questionImages[q.num]}" alt="Question ${q.num}" onclick="window.open(this.src, '_blank')" onerror="this.parentElement.innerHTML='<div class=\\'bg-gray-200 h-40 flex items-center justify-center\\'>Hình ảnh không tải được</div>'">
+                    </div>
+            `;
+        }
+        
+        if (q.text) {
+            html += `
+                    <p class="text-gray-800 mb-4 text-lg font-semibold mt-4">${q.text}</p>
+            `;
+        }
+        
+        html += `
+                    <div class="space-y-2 mt-4">
+        `;
+        
+        Object.entries(q.options).forEach(([key, value]) => {
+            html += `
+                        <label class="flex items-start gap-3 p-4 rounded-lg cursor-pointer transition-all bg-white border-2 border-gray-300 hover:bg-blue-50 answer-option" data-question="${q.num}" data-answer="${key}">
+                            <input type="radio" name="q${q.num}" value="${key}" onchange="handleAnswer(${q.num}, '${key}')"
+                                class="mt-1 w-5 h-5 text-blue-600">
+                            <span class="flex-1 text-gray-700">
+                                <span class="font-semibold text-blue-700">${key}.</span> ${value}
+                            </span>
+                        </label>
+            `;
+        });
+        
+        html += `
+                    </div>
+                </div>
+            </div>
+        </div>
+        `;
+    });
+    
+    container.innerHTML = html;
+}
+
+function handleAnswer(questionNum, answer) {
+    answers[questionNum] = answer;
+    updateProgress();
+    
+    document.querySelectorAll(`label[data-question="${questionNum}"]`).forEach(label => {
+        if (label.dataset.answer === answer) {
+            label.classList.remove('bg-white', 'border-gray-300');
+            label.classList.add('bg-blue-100', 'border-blue-500');
+        } else {
+            label.classList.remove('bg-blue-100', 'border-blue-500');
+            label.classList.add('bg-white', 'border-gray-300');
+        }
+    });
+}
+
+function updateProgress() {
+    const answered = Object.keys(answers).length;
+    const percent = Math.round((answered / 39) * 100);
+    
+    document.getElementById('progress').textContent = answered;
+    document.getElementById('progressPercent').textContent = percent + '%';
+    document.getElementById('progressBar').style.width = percent + '%';
+    
+    const unanswered = 39 - answered;
+    if (unanswered > 0) {
+        document.getElementById('warningBox').classList.remove('hidden');
+        document.getElementById('unansweredCount').textContent = unanswered;
+    } else {
+        document.getElementById('warningBox').classList.add('hidden');
+    }
+}
+
+// ========== PHÂN TÍCH CHI TIẾT ==========
+
+function calculateSkillScores(answers) {
+    const scores = {};
+    
+    for (const [skill, data] of Object.entries(skillCategories)) {
+        let correct = 0;
+        data.questions.forEach(qNum => {
+            if (answers[qNum] === correctAnswers[qNum]) {
+                correct++;
+            }
+        });
+        scores[skill] = {
+            correct: correct,
+            total: data.questions.length,
+            percentage: Math.round((correct / data.questions.length) * 100)
+        };
+    }
+    
+    return scores;
+}
+
+function estimateCEFRLevel(totalScore, skillScores) {
+    const basic = skillScores.basicComprehension.percentage;
+    const inference = skillScores.inference.percentage;
+    const details = skillScores.details.percentage;
+    
+    if (totalScore >= 90 && basic >= 85 && inference >= 85) {
+        return 'B1 - Cuối (Upper B1)';
+    } else if (totalScore >= 80 && inference >= 70) {
+        return 'B1 - Giữa (Mid B1)';
+    } else if (totalScore >= 70 && inference >= 60) {
+        return 'B1 - Đầu (Lower B1)';
+    } else if (totalScore >= 60 && details >= 65) {
+        return 'A2 - Cuối (Upper A2)';
+    } else if (totalScore >= 50) {
+        return 'A2 - Giữa (Mid A2)';
+    } else if (totalScore >= 40) {
+        return 'A2 - Đầu (Lower A2)';
+    } else if (totalScore >= 30) {
+        return 'A1 - Cuối (Upper A1)';
+    } else if (totalScore >= 20) {
+        return 'A1 - Giữa (Mid A1)';
+    } else {
+        return 'A1 - Đầu (Lower A1)';
+    }
+}
+
+function generateOverallAssessment(totalScore, cefrLevel, skillScores) {
+    let assessment = `Học sinh đạt ${totalScore}% (${cefrLevel}). `;
+    
+    if (totalScore >= 80) {
+        assessment += 'Kỹ năng nghe tiếng Anh rất tốt, có thể hiểu hội thoại và câu chuyện phức tạp. ';
+    } else if (totalScore >= 60) {
+        assessment += 'Kỹ năng nghe tiếng Anh khá, có thể hiểu ý chính và một số chi tiết quan trọng. ';
+    } else if (totalScore >= 40) {
+        assessment += 'Kỹ năng nghe tiếng Anh cơ bản, cần cải thiện thêm để nắm vững các kỹ năng nghe hiểu. ';
+    } else {
+        assessment += 'Kỹ năng nghe tiếng Anh còn yếu, cần tập trung luyện nghe từ vựng và câu đơn giản hàng ngày. ';
+    }
+    
+    return assessment;
+}
+
+function analyzeListeningSkills(skillScores) {
+    let analysis = 'Kỹ năng nghe: ';
+    const strengths = [];
+    const weaknesses = [];
+    
+    if (skillScores.basicComprehension.percentage >= 75) {
+        strengths.push('hiểu cơ bản');
+    } else if (skillScores.basicComprehension.percentage < 60) {
+        weaknesses.push('hiểu câu đơn giản (cần luyện nghe từ vựng cơ bản)');
+    }
+    
+    if (skillScores.details.percentage >= 75) {
+        strengths.push('nghe chi tiết');
+    } else if (skillScores.details.percentage < 60) {
+        weaknesses.push('nghe chi tiết (cần chú ý từ khóa)');
+    }
+    
+    if (skillScores.mainIdea.percentage >= 75) {
+        strengths.push('xác định ý chính');
+    } else if (skillScores.mainIdea.percentage < 60) {
+        weaknesses.push('xác định ý chính (cần tập tóm tắt nội dung)');
+    }
+    
+    if (skillScores.inference.percentage >= 75) {
+        strengths.push('suy luận');
+    } else if (skillScores.inference.percentage < 60) {
+        weaknesses.push('suy luận ẩn ý (cần luyện đoán nghĩa)');
+    }
+    
+    if (skillScores.purpose.percentage >= 75) {
+        strengths.push('hiểu mục đích');
+    } else if (skillScores.purpose.percentage < 60) {
+        weaknesses.push('hiểu mục đích giao tiếp (cần luyện function language)');
+    }
+    
+    if (strengths.length > 0) {
+        analysis += `Điểm mạnh: ${strengths.join(', ')}. `;
+    }
+    
+    if (weaknesses.length > 0) {
+        analysis += `Cần cải thiện: ${weaknesses.join(', ')}. `;
+    } else {
+        analysis += 'Tất cả các kỹ năng nghe đều tốt. ';
+    }
+    
+    return analysis;
+}
+
+function generateDetailedStrengths(skillScores) {
+    const strengths = [];
+    
+    for (const [skill, data] of Object.entries(skillScores)) {
+        if (data.percentage >= 75) {
+            strengths.push(`${skillCategories[skill].name} (${data.percentage}%)`);
+        }
+    }
+    
+    if (strengths.length === 0) {
+        return 'Cần cố gắng thêm để phát triển điểm mạnh';
+    }
+    
+    return strengths.join(', ');
+}
+
+function generateDetailedWeaknesses(skillScores) {
+    const weaknesses = [];
+    
+    for (const [skill, data] of Object.entries(skillScores)) {
+        if (data.percentage < 60) {
+            weaknesses.push(`${skillCategories[skill].name} (${data.percentage}%) - Trình độ ${skillCategories[skill].level}`);
+        }
+    }
+    
+    if (weaknesses.length === 0) {
+        return 'Không có điểm yếu đáng kể';
+    }
+    
+    return weaknesses.join(' | ');
+}
+
+function generateDetailedRecommendations(totalScore, skillScores, cefrLevel) {
+    let recommendations = '';
+    
+    if (skillScores.basicComprehension.percentage < 60) {
+        recommendations += '🎧 HIỂU CƠ BẢN: ';
+        recommendations += '(1) Nghe 15-20 phút mỗi ngày với audio đơn giản; ';
+        recommendations += '(2) Xem phim hoạt hình có phụ đề tiếng Anh; ';
+        recommendations += '(3) Luyện dictation (nghe viết) câu ngắn. ';
+    }
+    
+    if (skillScores.details.percentage < 60) {
+        recommendations += '🔍 CHI TIẾT: ';
+        recommendations += '(1) Tập trung nghe từ khóa (who, what, when, where); ';
+        recommendations += '(2) Đọc câu hỏi trước khi nghe; ';
+        recommendations += '(3) Ghi chú nhanh thông tin quan trọng. ';
+    }
+    
+    if (skillScores.mainIdea.percentage < 60) {
+        recommendations += '💡 Ý CHÍNH: ';
+        recommendations += '(1) Chú ý câu đầu và câu cuối; ';
+        recommendations += '(2) Luyện tóm tắt đoạn nghe bằng 1 câu; ';
+        recommendations += '(3) Tìm ý được lặp lại nhiều lần. ';
+    }
+    
+    if (skillScores.inference.percentage < 60) {
+        recommendations += '🧠 SUY LUẬN: ';
+        recommendations += '(1) Học cách "nghe giữa các dòng"; ';
+        recommendations += '(2) Chú ý ngữ điệu và cảm xúc người nói; ';
+        recommendations += '(3) Luyện đoán nghĩa từ ngữ cảnh. ';
+    }
+    
+    if (skillScores.purpose.percentage < 60) {
+        recommendations += '🎯 MỤC ĐÍCH: ';
+        recommendations += '(1) Học function language (mời, từ chối, gợi ý); ';
+        recommendations += '(2) Chú ý cấu trúc "Why did...?" "What...for?"; ';
+        recommendations += '(3) Luyện với phone messages và conversations. ';
+    }
+    
+    if (cefrLevel.includes('A1')) {
+        recommendations += '\n🎯 MỤC TIÊU: Để đạt A2, cần: (1) Nghe hiểu 300-500 từ vựng hàng ngày; (2) Hiểu hội thoại ngắn 1-2 phút; (3) Nắm được ý chính và chi tiết đơn giản. ';
+    } else if (cefrLevel.includes('A2')) {
+        recommendations += '\n🎯 MỤC TIÊU: Để đạt B1, cần: (1) Nghe hiểu 1000-1500 từ vựng; (2) Hiểu audio 3-5 phút; (3) Suy luận được ẩn ý và thái độ người nói. ';
+    } else if (cefrLevel.includes('B1')) {
+        recommendations += '\n🎯 MỤC TIÊU: Duy trì và nâng cao B1, cần: (1) Nghe podcast, audiobook tiếng Anh; (2) Học từ vựng academic và idioms; (3) Luyện IELTS Listening hoặc TOEFL Junior. ';
+    }
+    
+    recommendations += '\n📖 TÀI LIỆU ĐỀ XUẤT: ';
+    if (totalScore < 50) {
+        recommendations += 'British Council LearnEnglish Kids, ESL Pod (Beginner), Simple English Videos, Peppa Pig (with subtitles). ';
+    } else if (totalScore < 70) {
+        recommendations += 'BBC Learning English (6 Minute English), ESL Pod (Intermediate), TED-Ed, VOA Learning English. ';
+    } else {
+        recommendations += 'TED Talks, Podcasts (This American Life), BBC Radio, National Geographic documentaries. ';
+    }
+    
+    recommendations += '\n💪 LUYỆN TẬP HÀNG NGÀY: (1) Nghe 20-30 phút mỗi ngày; (2) Shadow (lặp lại ngay sau người nói); (3) Dictation 5 câu mỗi ngày; (4) Xem phim có phụ đề tiếng Anh.';
+    
+    return recommendations.trim();
+}
+
+async function submitTest() {
+    const unanswered = 39 - Object.keys(answers).length;
+    if (unanswered > 0) {
+        const confirm = window.confirm(`Bạn còn ${unanswered} câu chưa trả lời.\n\nBạn có chắc muốn nộp bài không?`);
+        if (!confirm) return;
+    }
+    
+    if (audioElement) {
+        audioElement.pause();
+    }
+    
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = `
+        <div class="spinner"></div>
+        <span>Đang phân tích và nộp bài...</span>
+    `;
+    
+    let correctCount = 0;
+let wrongQuestions = []; // Thêm dòng này
+
+Object.keys(correctAnswers).forEach(q => {
+    if (answers[q] === correctAnswers[q]) {
+        correctCount++;
+    } else if (answers[q]) { // Nếu đã trả lời nhưng sai
+        wrongQuestions.push(q);
+    }
+});
+
+// Chuyển mảng thành chuỗi
+const wrongQuestionsText = wrongQuestions.length > 0 
+    ? wrongQuestions.join(', ') 
+    : 'Không có';
+    
+    const totalScore = Math.round((correctCount / 39) * 100);
+    const endTime = new Date();
+    const timeUsed = Math.round((endTime - startTime) / 60000);
+    
+    // PHÂN TÍCH CHI TIẾT
+    const skillScores = calculateSkillScores(answers);
+    const cefrLevel = estimateCEFRLevel(totalScore, skillScores);
+    const overallAssessment = generateOverallAssessment(totalScore, cefrLevel, skillScores);
+    const listeningAnalysis = analyzeListeningSkills(skillScores);
+    const strengthsDetail = generateDetailedStrengths(skillScores);
+    const weaknessesDetail = generateDetailedWeaknesses(skillScores);
+    const recommendationsDetail = generateDetailedRecommendations(totalScore, skillScores, cefrLevel);
+    
+    const dataToSend = {
+        timestamp: new Date().toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' }),
+        name: studentInfo.name,
+        class: studentInfo.class,
+        parentPhone: studentInfo.parentPhone,
+        testType: 'Listening Test',
+        score: totalScore,
+        correctAnswers: correctCount,
+        totalQuestions: 39,
+        timeUsed: timeUsed + ' phút',
+        cefrLevel: cefrLevel,
+        basicComprehensionScore: skillScores.basicComprehension.percentage,
+        mainIdeaScore: skillScores.mainIdea.percentage,
+        detailsScore: skillScores.details.percentage,
+        inferenceScore: skillScores.inference.percentage,
+        purposeScore: skillScores.purpose.percentage,
+        overallAssessment: overallAssessment,
+        listeningAnalysis: listeningAnalysis,
+        strengthsDetail: strengthsDetail,
+        weaknessesDetail: weaknessesDetail,
+        recommendationsDetail: recommendationsDetail,
+         wrongQuestions: wrongQuestionsText, // THÊM DÒNG NÀY
+        answers: JSON.stringify(answers)
+    };
+    
+    try {
+        await fetch(GOOGLE_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(dataToSend)
+        });
+        
+        console.log('Đã gửi kết quả chi tiết lên Google Sheets');
+    } catch (error) {
+        console.error('Lỗi khi gửi dữ liệu:', error);
+    }
+    
+    document.getElementById('testScreen').classList.add('hidden');
+    document.getElementById('audioPlayerMain').classList.add('hidden');
+    document.getElementById('resultScreen').classList.remove('hidden');
+    
+    document.getElementById('resultName').textContent = studentInfo.name;
+    document.getElementById('resultTime').textContent = timeUsed + ' phút';
+    document.getElementById('resultPhone').textContent = studentInfo.parentPhone;
+}
+</script>
+
+</body>
+</html>
