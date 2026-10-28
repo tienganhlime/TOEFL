@@ -13,8 +13,7 @@
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .audio-player-main { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, #1976D2 0%, #1565C0 100%); border-radius: 16px; padding: 20px 30px; box-shadow: 0 8px 24px rgba(0,0,0,0.3); z-index: 9999; min-width: 320px; }
         .audio-controls-main { display: flex; align-items: center; gap: 16px; }
-        .play-btn-main { background: white; color: #1976D2; border: none; border-radius: 50%; width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s; font-size: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
-        .play-btn-main:hover { transform: scale(1.1); }
+        .play-btn-main { background: white; color: #1976D2; border: none; border-radius: 50%; width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; font-size: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
         .audio-info-main { color: white; flex: 1; }
         .volume-control { display: flex; align-items: center; gap: 8px; color: white; }
         .volume-slider { width: 100px; height: 6px; border-radius: 3px; background: rgba(255,255,255,0.3); outline: none; cursor: pointer; }
@@ -52,7 +51,7 @@
                     <div class="text-yellow-800 text-sm">
                         <p class="font-bold mb-1">⚠️ Lưu ý quan trọng:</p>
                         <p>• Đảm bảo âm lượng thiết bị ở mức vừa phải</p>
-                        <p>• Audio sẽ chạy liên tục, không thể dừng hoặc tua lại</p>
+                        <p>• Audio sẽ tự động phát khi bấm "Bắt đầu", không thể dừng hoặc tua lại</p>
                         <p>• Khi audio kết thúc = hết giờ làm bài</p>
                         <p>• Hãy tập trung cao độ khi làm bài!</p>
                     </div>
@@ -102,7 +101,7 @@
                         <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path>
                         </svg>
-                        <span id="audioStatus" class="text-sm font-bold text-blue-600">Audio: Ready</span>
+                        <span id="audioStatus" class="text-sm font-bold text-blue-600">Audio: Loading</span>
                     </div>
                 </div>
             </div>
@@ -139,22 +138,25 @@
     </div>
 </div>
 
-<!-- Audio Player cố định -->
+<!-- Audio Player cố định (không có nút điều khiển) -->
 <div id="audioPlayerMain" class="audio-player-main hidden">
     <div class="audio-controls-main">
-        <button class="play-btn-main" onclick="toggleAudio()" id="playBtnMain">▶</button>
+        <div class="play-btn-main" id="playBtnMain" style="cursor:default; pointer-events:none;">🎧</div>
         <div class="audio-info-main">
             <div class="font-bold text-lg">Listening Test Audio</div>
             <div class="text-sm opacity-90" id="audioTime">00:00 / 00:00</div>
+            <div class="w-full rounded-full h-2 mt-2" style="background: rgba(255,255,255,0.3);">
+                <div id="audioProgressBar" class="h-2 rounded-full" style="width:0%; background:white;"></div>
+            </div>
         </div>
         <div class="volume-control">
             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217zM14.657 2.929a1 1 0 011.414 0A9.972 9.972 0 0119 10a9.972 9.972 0 01-2.929 7.071 1 1 0 01-1.414-1.414A7.971 7.971 0 0017 10c0-2.21-.894-4.208-2.343-5.657a1 1 0 010-1.414zm-2.829 2.828a1 1 0 011.415 0A5.983 5.983 0 0115 10a5.984 5.984 0 01-1.757 4.243 1 1 0 01-1.415-1.415A3.984 3.984 0 0013 10a3.983 3.983 0 00-1.172-2.828 1 1 0 010-1.415z"></path>
             </svg>
-            <input type="range" min="0" max="100" value="100" class="volume-slider" onchange="setVolume(this.value)" id="volumeSlider">
+            <input type="range" min="0" max="100" value="100" class="volume-slider" onchange="setVolume(this.value)" oninput="setVolume(this.value)" id="volumeSlider">
         </div>
     </div>
-    <audio id="mainAudio" onended="onAudioComplete()" ontimeupdate="updateAudioTime()">
+    <audio id="mainAudio" preload="auto" controlsList="nodownload noplaybackrate" disablePictureInPicture oncontextmenu="return false;" onended="onAudioComplete()" ontimeupdate="updateAudioTime()">
         <source src="" type="audio/mpeg">
     </audio>
 </div>
@@ -302,6 +304,8 @@ let startTime;
 let audioElement = null;
 let isAudioPlaying = false;
 let submitted = false;
+let lastTime = 0;
+let audioEnded = false;
 
 function startTest() {
     const name = document.getElementById('studentName').value.trim();
@@ -322,39 +326,60 @@ function startTest() {
     document.getElementById('headerClass').textContent = classVal;
 
     renderQuestions();
-    setupAudio();
     startTime = new Date();
+    setupAudio(); // tự động phát audio ngay khi bấm nút
 }
 
 function setupAudio() {
     audioElement = document.getElementById('mainAudio');
     audioElement.src = AUDIO_URL;
-    audioElement.addEventListener('canplaythrough', function() {
-        document.getElementById('audioStatus').textContent = 'Audio: Ready to play';
-    });
+    audioElement.controls = false;
+
     audioElement.addEventListener('error', function() {
         document.getElementById('audioStatus').textContent = 'Audio: Error loading';
         console.error('Lỗi tải audio:', audioElement.error);
     });
+
+    // Chặn tua: nếu currentTime bị nhảy thì đưa về vị trí cũ
+    audioElement.addEventListener('timeupdate', function() {
+        if (!audioElement.seeking) lastTime = audioElement.currentTime;
+    });
+    audioElement.addEventListener('seeking', function() {
+        if (Math.abs(audioElement.currentTime - lastTime) > 0.5) {
+            audioElement.currentTime = lastTime;
+        }
+    });
+
+    // Chặn tạm dừng (phím media, tai nghe, hệ điều hành...)
+    audioElement.addEventListener('pause', function() {
+        if (!audioEnded && !submitted && !audioElement.ended) {
+            audioElement.play().catch(() => {});
+        }
+    });
+
+    // Chặn đổi tốc độ phát
+    audioElement.addEventListener('ratechange', function() {
+        if (audioElement.playbackRate !== 1) audioElement.playbackRate = 1;
+    });
+
     audioElement.load();
+    playAudio();
 }
 
-function toggleAudio() {
-    if (!audioElement) return;
-    const playBtn = document.getElementById('playBtnMain');
+function playAudio() {
     const statusSpan = document.getElementById('audioStatus');
-
-    if (isAudioPlaying) {
-        audioElement.pause();
-        playBtn.textContent = '▶';
-        statusSpan.textContent = 'Audio: Paused';
-        isAudioPlaying = false;
-    } else {
-        audioElement.play();
-        playBtn.textContent = '⏸';
-        statusSpan.textContent = 'Audio: Playing';
+    audioElement.play().then(() => {
         isAudioPlaying = true;
-    }
+        statusSpan.textContent = 'Audio: Playing';
+    }).catch(() => {
+        // Trường hợp trình duyệt chặn tự phát: chạm vào màn hình là phát
+        statusSpan.textContent = 'Chạm vào màn hình để nghe';
+        const resume = () => {
+            document.removeEventListener('click', resume);
+            playAudio();
+        };
+        document.addEventListener('click', resume);
+    });
 }
 
 function setVolume(value) {
@@ -364,6 +389,9 @@ function setVolume(value) {
 function updateAudioTime() {
     if (!audioElement) return;
     document.getElementById('audioTime').textContent = `${formatTime(audioElement.currentTime)} / ${formatTime(audioElement.duration)}`;
+    if (audioElement.duration) {
+        document.getElementById('audioProgressBar').style.width = (audioElement.currentTime / audioElement.duration * 100) + '%';
+    }
 }
 
 function formatTime(seconds) {
@@ -374,6 +402,7 @@ function formatTime(seconds) {
 }
 
 function onAudioComplete() {
+    audioEnded = true;
     document.getElementById('playBtnMain').textContent = '✓';
     document.getElementById('audioStatus').textContent = 'Audio: Completed';
     isAudioPlaying = false;
