@@ -56,17 +56,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s;
             font-size: 24px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        }
-        .play-btn-main:hover {
-            transform: scale(1.1);
-        }
-        .play-btn-main:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
         }
         .audio-info-main {
             color: white;
@@ -249,25 +240,34 @@
     </div>
 </div>
 
-<!-- Audio Player cố định -->
+<!-- Audio Player cố định (không có nút dừng/tua) -->
 <div id="audioPlayerMain" class="audio-player-main hidden">
     <div class="audio-controls-main">
-        <button class="play-btn-main" onclick="toggleAudio()" id="playBtnMain">
-            ▶
-        </button>
+        <!-- Chỉ là biểu tượng, không bấm được -->
+        <div class="play-btn-main" id="playBtnMain" style="cursor:default; pointer-events:none;">🎧</div>
         <div class="audio-info-main">
             <div class="font-bold text-lg">Listening Test Audio</div>
             <div class="text-sm opacity-90" id="audioTime">00:00 / 00:00</div>
+            <!-- Thanh tiến độ chỉ để xem, không bấm được -->
+            <div style="height:6px; background:rgba(255,255,255,0.3); border-radius:3px; margin-top:6px; pointer-events:none;">
+                <div id="audioProgressBar" style="height:6px; width:0%; background:white; border-radius:3px;"></div>
+            </div>
         </div>
+        <!-- Chỉ hiện nếu trình duyệt chặn tự phát -->
+        <button id="resumeBtn" class="hidden" onclick="startAudio()"
+            style="background:white; color:#1976D2; font-weight:bold; padding:8px 14px; border-radius:10px;">
+            ▶ Bấm để nghe
+        </button>
         <div class="volume-control">
             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217zM14.657 2.929a1 1 0 011.414 0A9.972 9.972 0 0119 10a9.972 9.972 0 01-2.929 7.071 1 1 0 01-1.414-1.414A7.971 7.971 0 0017 10c0-2.21-.894-4.208-2.343-5.657a1 1 0 010-1.414zm-2.829 2.828a1 1 0 011.415 0A5.983 5.983 0 0115 10a5.984 5.984 0 01-1.757 4.243 1 1 0 01-1.415-1.415A3.984 3.984 0 0013 10a3.983 3.983 0 00-1.172-2.828 1 1 0 010-1.415z"></path>
             </svg>
-            <input type="range" min="0" max="100" value="100" class="volume-slider" onchange="setVolume(this.value)" id="volumeSlider">
+            <input type="range" min="0" max="100" value="100" class="volume-slider" oninput="setVolume(this.value)" id="volumeSlider">
         </div>
     </div>
-    <audio id="mainAudio" onended="onAudioComplete()" ontimeupdate="updateAudioTime()">
-        <source src="" type="audio/mpeg">
+    <audio id="mainAudio" preload="auto" oncontextmenu="return false"
+           controlsList="nodownload noplaybackrate"
+           onended="onAudioComplete()" ontimeupdate="updateAudioTime()">
     </audio>
 </div>
 
@@ -437,6 +437,8 @@ let answers = {};
 let startTime;
 let audioElement = null;
 let isAudioPlaying = false;
+let lastTime = 0;          // Vị trí phát hợp lệ gần nhất (để chặn tua)
+let testFinished = false;  // true khi hết audio hoặc đã nộp bài -> cho phép dừng
 
 function startTest() {
     const name = document.getElementById('studentName').value.trim();
@@ -458,43 +460,69 @@ function startTest() {
     document.getElementById('headerClass').textContent = classVal;
     
     renderQuestions();
-    setupAudio();
     startTime = new Date();
+    setupAudio(); // Audio tự động chạy ngay khi bấm "Bắt đầu"
 }
 
 function setupAudio() {
     audioElement = document.getElementById('mainAudio');
     audioElement.src = AUDIO_URL;
-    
-    audioElement.addEventListener('canplaythrough', function() {
-        document.getElementById('audioStatus').textContent = 'Audio: Ready to play';
+    audioElement.controls = false;
+    audioElement.disablePictureInPicture = true;
+
+    // Ghi nhớ vị trí hợp lệ
+    audioElement.addEventListener('timeupdate', function() {
+        if (!audioElement.seeking) lastTime = audioElement.currentTime;
     });
-    
+
+    // Chặn tua: nếu vị trí bị nhảy, đưa về lại chỗ cũ
+    audioElement.addEventListener('seeking', function() {
+        if (!testFinished && Math.abs(audioElement.currentTime - lastTime) > 0.5) {
+            audioElement.currentTime = lastTime;
+        }
+    });
+
+    // Chặn dừng (kể cả phím media, tai nghe, màn hình khóa): tự phát lại
+    audioElement.addEventListener('pause', function() {
+        if (!testFinished && !audioElement.ended) {
+            audioElement.play().catch(function() {
+                document.getElementById('resumeBtn').classList.remove('hidden');
+            });
+        }
+    });
+
+    // Chặn đổi tốc độ
+    audioElement.addEventListener('ratechange', function() {
+        if (audioElement.playbackRate !== 1) audioElement.playbackRate = 1;
+    });
+
     audioElement.addEventListener('error', function() {
         document.getElementById('audioStatus').textContent = 'Audio: Error loading';
         console.error('Lỗi tải audio:', audioElement.error);
     });
-    
+
+    // Vô hiệu hóa điều khiển từ hệ điều hành (khóa màn hình, tai nghe...)
+    if ('mediaSession' in navigator) {
+        ['play', 'pause', 'seekto', 'seekbackward', 'seekforward', 'previoustrack', 'nexttrack', 'stop']
+            .forEach(function(action) {
+                try { navigator.mediaSession.setActionHandler(action, function() {}); } catch (e) {}
+            });
+    }
+
     audioElement.load();
+    startAudio();
 }
 
-function toggleAudio() {
-    if (!audioElement) return;
-    
-    const playBtn = document.getElementById('playBtnMain');
-    const statusSpan = document.getElementById('audioStatus');
-    
-    if (isAudioPlaying) {
-        audioElement.pause();
-        playBtn.textContent = '▶';
-        statusSpan.textContent = 'Audio: Paused';
-        isAudioPlaying = false;
-    } else {
-        audioElement.play();
-        playBtn.textContent = '⏸';
-        statusSpan.textContent = 'Audio: Playing';
+function startAudio() {
+    audioElement.play().then(function() {
         isAudioPlaying = true;
-    }
+        document.getElementById('audioStatus').textContent = 'Audio: Playing';
+        document.getElementById('resumeBtn').classList.add('hidden');
+    }).catch(function(err) {
+        console.warn('Trình duyệt chặn tự phát:', err);
+        document.getElementById('audioStatus').textContent = 'Audio: Bấm để nghe';
+        document.getElementById('resumeBtn').classList.remove('hidden');
+    });
 }
 
 function setVolume(value) {
@@ -509,6 +537,11 @@ function updateAudioTime() {
     const current = formatTime(audioElement.currentTime);
     const duration = formatTime(audioElement.duration);
     document.getElementById('audioTime').textContent = `${current} / ${duration}`;
+
+    if (audioElement.duration) {
+        document.getElementById('audioProgressBar').style.width =
+            (audioElement.currentTime / audioElement.duration * 100) + '%';
+    }
 }
 
 function formatTime(seconds) {
@@ -519,6 +552,7 @@ function formatTime(seconds) {
 }
 
 function onAudioComplete() {
+    testFinished = true;
     const playBtn = document.getElementById('playBtnMain');
     const statusSpan = document.getElementById('audioStatus');
     
@@ -845,11 +879,13 @@ function generateDetailedRecommendations(totalScore, skillScores, cefrLevel) {
 
 async function submitTest() {
     const unanswered = 39 - Object.keys(answers).length;
-    if (unanswered > 0) {
-        const confirm = window.confirm(`Bạn còn ${unanswered} câu chưa trả lời.\n\nBạn có chắc muốn nộp bài không?`);
-        if (!confirm) return;
+    if (unanswered > 0 && !testFinished) {
+        const confirmed = window.confirm(`Bạn còn ${unanswered} câu chưa trả lời.\n\nBạn có chắc muốn nộp bài không?`);
+        if (!confirmed) return;
     }
     
+    // Chỉ mở khóa audio sau khi đã xác nhận nộp bài
+    testFinished = true;
     if (audioElement) {
         audioElement.pause();
     }
@@ -862,20 +898,19 @@ async function submitTest() {
     `;
     
     let correctCount = 0;
-let wrongQuestions = []; // Thêm dòng này
+    let wrongQuestions = [];
 
-Object.keys(correctAnswers).forEach(q => {
-    if (answers[q] === correctAnswers[q]) {
-        correctCount++;
-    } else if (answers[q]) { // Nếu đã trả lời nhưng sai
-        wrongQuestions.push(q);
-    }
-});
+    Object.keys(correctAnswers).forEach(q => {
+        if (answers[q] === correctAnswers[q]) {
+            correctCount++;
+        } else if (answers[q]) { // Đã trả lời nhưng sai
+            wrongQuestions.push(q);
+        }
+    });
 
-// Chuyển mảng thành chuỗi
-const wrongQuestionsText = wrongQuestions.length > 0 
-    ? wrongQuestions.join(', ') 
-    : 'Không có';
+    const wrongQuestionsText = wrongQuestions.length > 0 
+        ? wrongQuestions.join(', ') 
+        : 'Không có';
     
     const totalScore = Math.round((correctCount / 39) * 100);
     const endTime = new Date();
@@ -911,7 +946,7 @@ const wrongQuestionsText = wrongQuestions.length > 0
         strengthsDetail: strengthsDetail,
         weaknessesDetail: weaknessesDetail,
         recommendationsDetail: recommendationsDetail,
-         wrongQuestions: wrongQuestionsText, // THÊM DÒNG NÀY
+        wrongQuestions: wrongQuestionsText,
         answers: JSON.stringify(answers)
     };
     
